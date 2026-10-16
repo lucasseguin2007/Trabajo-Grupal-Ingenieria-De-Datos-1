@@ -1,5 +1,5 @@
 # Trabajo-Grupal-Ingenieria-De-Datos-1
-Trabajo Grupal De Ingenieria de datos /n 
+Trabajo Grupal De Ingenieria de datos  
 Integrantes:
 Uriel Fretes
 Ezequiel Leguiza
