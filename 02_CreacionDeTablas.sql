@@ -1,8 +1,8 @@
 Use GestionDeHotel;
 GO
-create table Empleados 
-	(IdEmpleado int primary key identity (1,1),
-	DNI int unique not null,
+create table Empleados (
+	IdEmpleado int primary key identity (1,1),
+	Dni int unique not null,
 	Nombre nvarchar(50) not null,
 	Correo nvarchar(50) unique not null,
 	Sueldo decimal (10,2) not null,
@@ -16,15 +16,15 @@ create table HorarioEmpleado (
 	constraint ValidarDia check (DiaSemana in ('Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo')),
 	HoraEntrada Time not null,
 	HoraSalida Time not null);
-
 	
-
 create table Habitaciones
 	(IdHabitacion int primary key identity (1,1),
 	Estado Varchar(15),
 	Limpieza Varchar(30),
 	Piso int,
-	IdTipo int not null);
+	IdTipoHabitacion int not null
+	foreign key (IdTipoHabitacion) references TiposDeHabitacion(IdTipoHabitacion)
+	);
 
 create table Reservas (
 	IdReserva int primary key identity (1,1),
@@ -32,7 +32,6 @@ create table Reservas (
 	Estado varchar(30),
 	FechaEntrada date not null,
 	FechaSalida date not null,
-	Importe decimal(12,2),
 	Subtotal decimal(12,2),
 	IdHabitacion int,
 	foreign key (IdHabitacion) references Habitaciones(IdHabitacion),
@@ -48,71 +47,76 @@ create table Estadias (
 	foreign key (IdReserva) references Reservas(IdReserva));
 
 
-create table categorias(
-idCategoria INT primary key identity(1,1),
-nombredeCategoria nvarchar(30) not null
+create table Categorias(
+IdCategoria INT primary key identity(1,1),
+NombreDeCategoria nvarchar(30) not null
 )
 
 
 create table Productos(
-idProducto INT Primary key identity(1,1),
-nombreProducto nvarchar(30) not null,
-idCategoria INT not null,
-foreign key (idCategoria) references Categorias (idCategoria),
-stock int not null,
-precio money not null
+IdProducto INT Primary key identity(1,1),
+NombreProducto nvarchar(30) not null,
+IdCategoria INT not null,
+foreign key (IdCategoria) references Categorias (IdCategoria),
+Stock int not null,
+Precio money not null
 )
 
 
-create table huespedes (
-idHuesped int primary key identity(1,1),
-nombreHuesped nvarchar(50) not null,
-correoHuesped nvarchar(60),
-fechaNacimiento date not null,
-numTelefono nvarchar(15)
+create table Huespedes (
+IdHuesped int primary key identity(1,1),
+NombreHuesped nvarchar(50) not null,
+CorreoHuesped nvarchar(60),
+FechaNacimiento date not null,
+NumeroDeTelefono nvarchar(15)
 )
 create table ReservasHuespedes(
-idReserva int not null,
-foreign key (idReserva) references Reservas (idReserva),
-idHuesped int not null,
-foreign key (idHuesped) references Huespedes (idHuesped),
-primary key (idReserva, idHuesped),
-esTitular bit not null
+IdReserva int not null,
+foreign key (IdReserva) references Reservas(IdReserva),
+IdHuesped int not null,
+foreign key (IdHuesped) references Huespedes (IdHuesped),
+primary key (IdReserva, IdHuesped),
+EsTitular bit not null
 )
 CREATE TABLE PlazasDeEstacionamiento (
 	IdPlazaDeEstacionamiento INT  PRIMARY KEY IDENTITY(1,1),
 	Estado nvarchar(20) NOT NULL,
 	CONSTRAINT DisponibilidadDeEstacionamiento CHECK (Estado IN ('Disponible', 'Ocupada'))
 	)
-create table vehiculos(
-idVehiculo int primary key identity(1,1),
-idHuesped int not null,
-foreign key (idHuesped) references Huespedes (idHuesped),
-marcaVehiculo nvarchar(20) not null,
-modeloVehiculo nvarchar(20) not null,
-colorVehiculo nvarchar(20) not null,
-patenteVehiculo nvarchar(15) unique not null,
-IdPlazaDeEstacionamiento int not null,
-foreign key (IdPlazaDeEstacionamiento) references PlazasDeEstacionamiento (IdPlazaDeEstacionamiento)
+
+create table Vehiculos(
+IdVehiculo int primary key identity(1,1),
+IdHuesped int not null,
+foreign key (IdHuesped) references Huespedes (IdHuesped),
+MarcaVehiculo nvarchar(20) not null,
+ModeloVehiculo nvarchar(20) not null,
+ColorVehiculo nvarchar(20) not null,
+PatenteVehiculo nvarchar(15) unique not null
 )
 
-create table tiposdeHabitacion(
-idTipoHabitacion int primary key identity(1,1),
-nombreTipo nvarchar(30) not null,
-costoHabitacion money not null,
-capacidadHabitacion int not null,
-cantidadHabitaciones int not null
+create table VehiculosPlazas(
+IdVehiculo int not null,
+IdPlazaDeEstacionamiento int not null,
+constraint IdVehiculoPlaza primary key (IdVehiculo, IdPlazaDeEstacionamiento),
+constraint VehiculoPlaza_Vehiculos foreign key (IdVehiculo) references Vehiculos(IdVehiculo),
+constraint VehiculoPlaza_Plaza foreign key (IdPlazaDeEstacionamiento) references PlazasDeEstacionamiento (IdPlazaDeEstacionamiento)
+)
+
+create table TiposDeHabitacion(
+IdTipoHabitacion int primary key identity(1,1),
+NombreTipo nvarchar(30) not null,
+CostoHabitacion money not null,
+CapacidadHabitacion int not null,
 )
 
 create table LimpiezasdeHabitaciones(
-idLimpieza int primary key identity(1,1),
-horarioInicioLimpieza time not null,
-horarioFinLimpieza time not null,
-fechaLimpieza date not null,
-idEmpleado int not null,
-foreign key (idEmpleado) references Empleados (idEmpleado),
-idHabitacion int not null,
-foreign key (idHabitacion) references Habitaciones (idHabitacion)
+IdLimpieza int primary key identity(1,1),
+HorarioInicioLimpieza datetime2 not null,
+HorarioFinLimpieza datetime2 not null,
+IdEmpleado int not null,
+foreign key (IdEmpleado) references Empleados (IdEmpleado),
+IdHabitacion int not null,
+foreign key (IdHabitacion) references Habitaciones (IdHabitacion)
 )
 
 
@@ -123,7 +127,7 @@ CREATE TABLE Facturas (
 	FechaEmision DATE NOT NULL,
 	IdReserva INT NOT NULL,
 	FOREIGN KEY(IdReserva) REFERENCES Reservas(IdReserva),
-	TipoComprobante varchar(30) NOT NULL,
+	TipoFactura varchar(30) NOT NULL,
 	)
 
 CREATE TABLE Pagos (
@@ -143,10 +147,8 @@ CREATE TABLE DetallesFactura (
 	IdDetalleFactura INT PRIMARY KEY IDENTITY(1,1),
 	IdFactura INT NOT NULL,
 	FOREIGN KEY (IdFactura) REFERENCES Facturas(IdFactura),
-	Subtotal DECIMAL(12,2) NOT NULL,
 	Impuesto DECIMAL(12,2) NOT NULL,
 	Estado Varchar(20) NOT NULL,
-	Total Decimal(12,2) NOT NULL,
 	PrecioUnitario DECIMAL(12,2) NOT NULL,
 	Cantidad INT NOT NULL,
 	CONSTRAINT ValidarCantidadDetalleFactura CHECK (Cantidad > 0),
@@ -171,43 +173,48 @@ CREATE TABLE ConsumosDeHuesped (
 	FechaConsumo DATE NOT NULL,
 	CONSTRAINT ConsumoDeHuesped PRIMARY KEY (IdHuesped,IdConsumo),
 	)
+
 create table ProductosPorConsumo (
-IdConsumo int primary key identity(1 ,1),
+IdConsumo int primary key identity(1,1),
 Idproducto int,
 foreign key (IdProducto) references Productos(IdProducto),
-cantidad int  not null,
-precioTotal int not null)
+Cantidad int  not null
+)
 go
+
 create table SolicitudesDeMantenimiento (
 IdSolicitud int primary key identity(1,1),
 IdEmpleado int,
 foreign key (IdEmpleado) references Empleados(IdEmpleado),
-fecha date not null,
-estado nvarchar(20) not null default 'En espera',
-constraint ValidarEstado check (estado in('En espera', 'En proceso','Finalizada')),
-area nvarchar(25),
-constraint ValidarArea check (area in('Mantenimiento general','Electricidad','Plomeria','Gas','Conexion')),
-descripcion nvarchar(100),
-lugar nvarchar(50) not null, 
-equipo nvarchar(50))
+Fecha date not null,
+Estado nvarchar(20) not null default 'En espera',
+constraint ValidarEstado check (Estado in('En espera', 'En proceso','Finalizada')),
+Area nvarchar(25),
+constraint ValidarArea check (Area in('Mantenimiento general','Electricidad','Plomeria','Gas','Conexion')),
+Descripcion nvarchar(100),
+Lugar nvarchar(50) not null, 
+Equipo nvarchar(50))
 go
+
 create table RegistrosDeAsistencia(
 IdAsitencia int primary key identity(1,1),
 IdEmpleado int,
 foreign key (IdEmpleado) references Empleados(IdEmpleado),
-horaEntrada time not null,
-horaSalida time not null,
-fecha date not null)
+horaEntrada datetime2 not null,
+horaSalida datetime2 not null,
+)
 go
+
 create table ServiciosExtra(
 IdServicio int primary key identity(1,1),
-nombreServicio nvarchar(30),
-precioTotal int not null,
-horario time)
+NombreServicio nvarchar(30),
+ValorUnitario int not null,
+Horario time)
 go
+
 create table ConsumosServiciosExtra(
 IdConsumoServicio int primary key identity (1,1),
-precio int not null,
+Precio int not null,
 IdServicio int,
 foreign key (IdServicio) references ServiciosExtra(IdServicio),
 IdEstadia int,
