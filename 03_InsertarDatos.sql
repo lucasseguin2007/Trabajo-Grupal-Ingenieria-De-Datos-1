@@ -1,7 +1,7 @@
 USE GestionDeHotel;
 GO
 
-INSERT INTO Empleados(DNI,Nombre,Correo,Sueldo,HorasSemanales) VALUES
+INSERT INTO Empleados(Dni,Nombre,Correo,Sueldo,HorasSemanales) VALUES
 (40111222,'Juan Zeljkovic','juan@gmail.com',1100000,40),
 (41222333,'Pepe Perez','Pepe@gmail.com',950000,40),
 (42333444,'Ivan Marcone','perro@gmail.com',950000,40),
@@ -23,6 +23,7 @@ INSERT INTO Empleados(DNI,Nombre,Correo,Sueldo,HorasSemanales) VALUES
 (48012345,'Nicolas Paz','nicopaz@gmail.com',800000,40),
 (49123457,'Juan Ignacio','juani@gmail.com',650000,20);
 GO
+
 
 Insert into HorarioEmpleado(IdEmpleado,DiaSemana,HoraEntrada,HoraSalida) values
 (1,'Lunes','08:00','16:00'),
@@ -52,43 +53,45 @@ Insert into HorarioEmpleado(IdEmpleado,DiaSemana,HoraEntrada,HoraSalida) values
 (17,'Viernes','08:00','16:00');
 GO
 
-INSERT INTO RegistrosDeAsistencia(IdEmpleado,horaEntrada,horaSalida,fecha) VALUES
-(1,'08:02','16:05','2026-11-02'),
-(1,'08:00','16:00','2026-11-03'),
-(1,'07:58','16:10','2026-11-04'),
-(2,'16:05','23:00','2026-11-02'),
-(2,'16:00','23:02','2026-11-03'),
-(3,'08:10','16:00','2026-10-29'),
-(3,'08:00','15:55','2026-10-30'),
-(4,'08:00','16:00','2026-10-31'),
-(4,'08:20','16:00','2026-11-01'),
-(5,'07:01','15:00','2026-11-02'),
-(5,'07:05','15:00','2026-11-03'),
-(6,'07:00','15:10','2026-10-28'),
-(6,'07:00','15:00','2026-10-29'),
-(6,'06:55','15:03','2026-11-04'),
-(7,'15:00','23:04','2026-10-30'),
-(7,'15:30','23:00','2026-10-31'),
-(8,'15:00','23:07','2026-11-01'),
-(9,'09:00','17:00','2026-11-03'),
-(10,'09:00','17:20','2026-10-28'),
-(11,'09:00','17:00','2026-10-29'),
-(13,'06:00','14:01','2026-11-02'),
-(14,'06:25','14:00','2026-11-03');
+
+INSERT INTO RegistrosDeAsistencia(IdEmpleado,HoraEntrada,HoraSalida) VALUES
+(1,'08:02','16:05'),
+(1,'08:00','16:00'),
+(1,'07:58','16:10'),
+(2,'16:05','23:00'),
+(2,'16:00','23:02'),
+(3,'08:10','16:00'),
+(3,'08:00','15:55'),
+(4,'08:00','16:00'),
+(4,'08:20','16:00'),
+(5,'07:01','15:00'),
+(5,'07:05','15:00'),
+(6,'07:00','15:10'),
+(6,'07:00','15:00'),
+(6,'06:55','15:03'),
+(7,'15:00','23:04'),
+(7,'15:30','23:00'),
+(8,'15:00','23:07'),
+(9,'09:00','17:00'),
+(10,'09:00','17:20'),
+(11,'09:00','17:00'),
+(13,'06:00','14:01'),
+(14,'06:25','14:00');
 GO
 
 
-INSERT INTO tiposdeHabitacion(nombreTipo,costoHabitacion,capacidadHabitacion,cantidadHabitaciones) VALUES
-('Simple',45000,1,4),
-('Doble Estandar',70000,2,4),
-('Doble Lujo',85000,2,3),
-('Triple',100000,3,2),
-('Familiar',130000,4,3),
-('Suite',160000,2,3),
-('Suite Presidencial',300000,4,1);
+INSERT INTO TiposDeHabitacion(NombreTipo,CostoHabitacion,CapacidadHabitacion) VALUES
+('Simple',45000,1),
+('Doble Estandar',70000,2),
+('Doble Lujo',85000,2),
+('Triple',100000,3),
+('Familiar',130000,4),
+('Suite',160000,2),
+('Suite Presidencial',300000,4);
 GO
 
-INSERT INTO Habitaciones(Estado,Limpieza,Piso,IdTipo) VALUES
+
+INSERT INTO Habitaciones(Estado,Limpieza,Piso,IdTipoHabitacion) VALUES
 ('Ocupada','Limpia',1,1),
 ('Disponible','Limpia',1,1),
 ('Disponible','Limpia',1,1),
@@ -112,7 +115,7 @@ INSERT INTO Habitaciones(Estado,Limpieza,Piso,IdTipo) VALUES
 GO
 
 
-INSERT INTO huespedes(nombreHuesped,correoHuesped,fechaNacimiento,numTelefono) VALUES
+INSERT INTO huespedes(NombreHuesped,CorreoHuesped,FechaNacimiento,NumeroDeTelefono) VALUES
 ('Luquitas flores', 'mebailocedrola@gmail.com','1985-03-14','+5491155550001'),
 ('Arquero Cedrola','bailealuquitas@gmail.com','1990-07-22','+5491155550002'),
 ('Luis Suarez ','luchosuarez@gmail.com','1978-11-05','+5491155550003'),
@@ -135,6 +138,7 @@ INSERT INTO huespedes(nombreHuesped,correoHuesped,fechaNacimiento,numTelefono) V
 ('Matias Soule','matisoule@mail.com','1999-02-25','+5491155550020');
 GO
 
+
 INSERT INTO PlazasDeEstacionamiento(Estado) VALUES
 ('Ocupada'),('Ocupada'),('Ocupada'),('Ocupada'),
 ('Disponible'),('Disponible'),('Disponible'),('Disponible'),
@@ -143,46 +147,48 @@ INSERT INTO PlazasDeEstacionamiento(Estado) VALUES
 ('Disponible'),('Disponible'),('Disponible'),('Disponible');
 GO
 
-INSERT INTO vehiculos(idHuesped,marcaVehiculo,modeloVehiculo,colorVehiculo,patenteVehiculo,IdPlazaDeEstacionamiento) VALUES
-(9,'Toyota','Corolla','Gris','AB123CD',1),
-(10,'Volkswagen','Gol Trend','Blanco','AC456EF',2),
-(11,'Ford','Focus','Azul','AD789GH',3),
-(12,'Chevrolet','Onix','Rojo','AE012IJ',4),
-(13,'Renault','Sandero','Negro','AF345KL',5),
-(14,'Fiat','Cronos','Plata','AG678MN',6),
-(1,'Peugeot','208','Blanco','AA111BB',7),
-(2,'Honda','Fit','Verde','AA222CC',8),
-(3,'Citroen','C3','Gris','AA333DD',9),
-(5,'Nissan','Versa','Negro','AA444EE',10),
-(6,'Toyota','Hilux','Blanco','AA555FF',11),
-(15,'Jeep','Renegade','Azul','AA666GG',12);
+
+INSERT INTO Vehiculos(IdHuesped,MarcaVehiculo,ModeloVehiculo,ColorVehiculo,PatenteVehiculo) VALUES
+(9,'Toyota','Corolla','Gris','AB123CD'),
+(10,'Volkswagen','Gol Trend','Blanco','AC456EF'),
+(11,'Ford','Focus','Azul','AD789GH'),
+(12,'Chevrolet','Onix','Rojo','AE012IJ'),
+(13,'Renault','Sandero','Negro','AF345KL'),
+(14,'Fiat','Cronos','Plata','AG678MN'),
+(1,'Peugeot','208','Blanco','AA111BB'),
+(2,'Honda','Fit','Verde','AA222CC'),
+(3,'Citroen','C3','Gris','AA333DD'),
+(5,'Nissan','Versa','Negro','AA444EE'),
+(6,'Toyota','Hilux','Blanco','AA555FF'),
+(15,'Jeep','Renegade','Azul','AA666GG');
 GO
 
 
-INSERT INTO Reservas(FechaReserva,Estado,FechaEntrada,FechaSalida,Importe,Subtotal,IdHabitacion,CantidadHuespedes,PrecioPorNoche) VALUES
-('2026-09-01','Finalizada','2026-09-10','2026-09-13',163350,135000,2,1,45000),
-('2026-09-05','Finalizada','2026-09-15','2026-09-18',254100,210000,6,2,70000),
-('2026-09-12','Finalizada','2026-09-20','2026-09-22',205700,170000,10,2,85000),
-('2026-09-18','Finalizada','2026-09-28','2026-10-01',363000,300000,13,3,100000),
-('2026-09-25','Finalizada','2026-10-05','2026-10-10',786500,650000,15,4,130000),
-('2026-10-01','Finalizada','2026-10-12','2026-10-14',387200,320000,18,2,160000),
-('2026-10-08','Finalizada','2026-10-17','2026-10-20',163350,135000,3,1,45000),
-('2026-10-10','Finalizada','2026-10-22','2026-10-25',254100,210000,5,2,70000),
-('2026-10-15','Finalizada','2026-10-24','2026-10-27',1089000,900000,20,4,300000),
-('2026-10-20','Finalizada','2026-10-28','2026-10-31',254100,210000,8,2,70000),
-('2026-10-25','En curso','2026-11-02','2026-11-06',217800,180000,1,1,45000),
-('2026-10-26','En curso','2026-11-03','2026-11-07',338800,280000,5,2,70000),
-('2026-10-28','En curso','2026-11-01','2026-11-05',411400,340000,9,2,85000),
-('2026-10-30','En curso','2026-11-04','2026-11-08',484000,400000,12,3,100000),
-('2026-10-29','Confirmada','2026-11-10','2026-11-13',254100,210000,7,2,70000),
-('2026-11-01','Confirmada','2026-11-12','2026-11-15',471900,390000,14,2,130000),
-('2026-11-02','Confirmada','2026-11-20','2026-11-24',1452000,1200000,20,2,300000),
-('2026-11-03','Pendiente','2026-12-01','2026-12-05',774400,640000,19,2,160000),
-('2026-11-04','Pendiente','2026-12-10','2026-12-12',108900,90000,2,1,45000),
-('2026-10-05','Cancelada','2026-10-18','2026-10-20',205700,170000,11,2,85000),
-('2026-10-12','Cancelada','2026-10-30','2026-11-02',471900,390000,16,3,130000),
-('2026-10-14','Cancelada','2026-11-05','2026-11-08',580800,480000,19,2,160000);
+INSERT INTO Reservas(FechaReserva,Estado,FechaEntrada,FechaSalida,Subtotal,IdHabitacion,CantidadHuespedes,PrecioPorNoche) VALUES
+('2026-09-01','Finalizada','2026-09-10','2026-09-13',135000,2,1,45000),
+('2026-09-05','Finalizada','2026-09-15','2026-09-18',210000,6,2,70000),
+('2026-09-12','Finalizada','2026-09-20','2026-09-22',170000,10,2,85000),
+('2026-09-18','Finalizada','2026-09-28','2026-10-01',300000,13,3,100000),
+('2026-09-25','Finalizada','2026-10-05','2026-10-10',650000,15,4,130000),
+('2026-10-01','Finalizada','2026-10-12','2026-10-14',320000,18,2,160000),
+('2026-10-08','Finalizada','2026-10-17','2026-10-20',135000,3,1,45000),
+('2026-10-10','Finalizada','2026-10-22','2026-10-25',210000,5,2,70000),
+('2026-10-15','Finalizada','2026-10-24','2026-10-27',900000,20,4,300000),
+('2026-10-20','Finalizada','2026-10-28','2026-10-31',210000,8,2,70000),
+('2026-10-25','En curso','2026-11-02','2026-11-06',180000,1,1,45000),
+('2026-10-26','En curso','2026-11-03','2026-11-07',280000,5,2,70000),
+('2026-10-28','En curso','2026-11-01','2026-11-05',340000,9,2,85000),
+('2026-10-30','En curso','2026-11-04','2026-11-08',400000,12,3,100000),
+('2026-10-29','Confirmada','2026-11-10','2026-11-13',210000,7,2,70000),
+('2026-11-01','Confirmada','2026-11-12','2026-11-15',390000,14,2,130000),
+('2026-11-02','Confirmada','2026-11-20','2026-11-24',1200000,20,2,300000),
+('2026-11-03','Pendiente','2026-12-01','2026-12-05',640000,19,2,160000),
+('2026-11-04','Pendiente','2026-12-10','2026-12-12',90000,2,1,45000),
+('2026-10-05','Cancelada','2026-10-18','2026-10-20',170000,11,2,85000),
+('2026-10-12','Cancelada','2026-10-30','2026-11-02',390000,16,3,130000),
+('2026-10-14','Cancelada','2026-11-05','2026-11-08',480000,19,2,160000);
 GO
+
 
 INSERT INTO ReservasHuespedes(idReserva,idHuesped,esTitular) VALUES
 (1,1,1),
@@ -208,6 +214,7 @@ INSERT INTO ReservasHuespedes(idReserva,idHuesped,esTitular) VALUES
 (22,20,1),(22,1,0);
 GO
 
+
 Insert into Estadias(FechaHoraCheckIn,Estado,FechaHoraCheckOut,IdReserva) values
 ('2026-09-10 14:05:00','Finalizada','2026-09-13 10:10:00',1),
 ('2026-09-15 15:00:00','Finalizada','2026-09-18 11:00:00',2),
@@ -226,9 +233,7 @@ Insert into Estadias(FechaHoraCheckIn,Estado,FechaHoraCheckOut,IdReserva) values
 GO
 
 
-
-
-INSERT INTO categorias(nombredeCategoria) VALUES
+INSERT INTO Categorias(NombreDeCategoria) VALUES
 ('Bebidas sin alcohol'),
 ('Bebidas con alcohol'),
 ('Snacks'),
@@ -239,7 +244,8 @@ INSERT INTO categorias(nombredeCategoria) VALUES
 ('Souvenirs');
 GO
 
-INSERT INTO Productos(nombreProducto,idCategoria,stock,precio) VALUES
+
+INSERT INTO Productos(NombreProducto,IdCategoria,Stock,Precio) VALUES
 ('Agua mineral 500ml',1,120,1500),
 ('Coca cola 500ml',1,90,2200),
 ('Jugo de naranja',1,40,2500),
@@ -262,28 +268,30 @@ INSERT INTO Productos(nombreProducto,idCategoria,stock,precio) VALUES
 ('Saquitos de Te Green Hill',7,80,1800);
 GO
 
-INSERT INTO ProductosPorConsumo(Idproducto,cantidad,precioTotal) VALUES
-(1,2,3000),
-(10,1,8000),
-(4,3,13500),
-(13,2,25000),
-(5,2,11000),
-(7,1,2800),
-(15,2,22000),
-(11,2,21000),
-(16,1,4800),
-(6,2,12000),
-(4,4,18000),
-(14,3,29400),
-(2,2,4400),
-(10,1,8000),
-(3,2,5000),
-(12,2,8400),
-(4,2,9000),
-(17,1,5200),
-(18,1,3000),
-(8,2,7000);
+
+INSERT INTO ProductosPorConsumo(Idproducto,cantidad) VALUES
+(1,2),
+(10,1),
+(4,3),
+(13,2),
+(5,2),
+(7,1),
+(15,2),
+(11,2),
+(16,1),
+(6,2),
+(4,4),
+(14,3),
+(2,2),
+(10,1),
+(3,2),
+(12,2),
+(4,2),
+(17,1),
+(18,1),
+(8,2);
 GO
+
 
 Insert into ConsumosDeHuesped(IdHuesped,IdConsumo,FechaConsumo) values
 (1,1,'2026-09-11'),
@@ -309,7 +317,7 @@ Insert into ConsumosDeHuesped(IdHuesped,IdConsumo,FechaConsumo) values
 GO
 
 
-INSERT INTO Facturas(IdEmpleado,FechaEmision,IdReserva,TipoComprobante) values
+INSERT INTO Facturas(IdEmpleado,FechaEmision,IdReserva,TipoFactura) values
 (1,'2026-09-13',1,'Factura B'),
 (2,'2026-09-18',2,'Factura B'),
 (1,'2026-09-22',3,'Factura A'),
@@ -325,29 +333,31 @@ INSERT INTO Facturas(IdEmpleado,FechaEmision,IdReserva,TipoComprobante) values
 (2,'2026-10-20',7,'Factura B');
 GO
 
-Insert into DetallesFactura(IdFactura,Subtotal,Impuesto,Estado,Total,PrecioUnitario,Cantidad) values
-(1,135000,28350,'Pagada',163350,45000,3),
-(1,11000,2310,'Pagada',13310,11000,1),
-(2,210000,44100,'Pagada',254100,70000,3),
-(2,13500,2835,'Pagada',16335,13500,1),
-(3,170000,35700,'Pagada',205700,85000,2),
-(3,25000,5250,'Pagada',30250,25000,1),
-(4,300000,63000,'Pagada',363000,100000,3),
-(4,11000,2310,'Pagada',13310,11000,1),
-(5,650000,136500,'Pagada',786500,130000,5),
-(5,24800,5208,'Pagada',30008,24800,1),
-(6,320000,67200,'Pagada',387200,160000,2),
-(6,25800,5418,'Pagada',31218,25800,1),
-(7,135000,28350,'Pagada',163350,45000,3),
-(8,210000,44100,'Pagada',254100,70000,3),
-(8,12000,2520,'Pagada',14520,12000,1),
-(9,900000,189000,'Pagada',1089000,300000,3),
-(9,47400,9954,'Pagada',57354,47400,1),
-(10,130000,27300,'Pagada',157300,130000,1),
-(11,63000,13230,'Pagada',76230,63000,1),
-(12,117000,24570,'Emitida',141570,117000,1),
-(13,135000,28350,'Anulada',163350,45000,3);
+
+Insert into DetallesFactura(IdFactura,Impuesto,Estado,PrecioUnitario,Cantidad) values
+(1,28350,'Pagada',45000,3),
+(1,2310,'Pagada',11000,1),
+(2,44100,'Pagada',70000,3),
+(2,2835,'Pagada',13500,1),
+(3,35700,'Pagada',85000,2),
+(3,5250,'Pagada',25000,1),
+(4,63000,'Pagada',100000,3),
+(4,2310,'Pagada',11000,1),
+(5,136500,'Pagada',130000,5),
+(5,5208,'Pagada',24800,1),
+(6,67200,'Pagada',160000,2),
+(6,5418,'Pagada',25800,1),
+(7,28350,'Pagada',45000,3),
+(8,44100,'Pagada',70000,3),
+(8,2520,'Pagada',12000,1),
+(9,189000,'Pagada',300000,3),
+(9,9954,'Pagada',47400,1),
+(10,27300,'Pagada',130000,1),
+(11,13230,'Pagada',63000,1),
+(12,24570,'Emitida',117000,1),
+(13,28350,'Anulada',45000,3);
 GO
+
 
 INSERT INTO Pagos(IdReserva,Metodo,Importe,Cuotas,Descripcion,Estado) values
 (1,'Efectivo',176660,1,'Pago total al check-out','Aprobado'),
@@ -373,6 +383,8 @@ INSERT INTO Pagos(IdReserva,Metodo,Importe,Cuotas,Descripcion,Estado) values
 (21,'Tarjeta de debito',157300,1,'Penalidad por cancelacion tardia','Aprobado'),
 (22,'Tarjeta de credito',100000,1,'Pago rechazado por el emisor','Rechazado');
 GO
+
+
 INSERT INTO Gastos(IdEmpleado,FechaGasto,Monto,Estado,CategoriaGasto) values
 (9,'2026-09-02',45000,'Pagado','Insumos'),
 (10,'2026-09-05',120000,'Pagado','Mantenimiento'),
@@ -396,7 +408,8 @@ INSERT INTO Gastos(IdEmpleado,FechaGasto,Monto,Estado,CategoriaGasto) values
 (10,'2026-11-04',49500,'Pendiente','Mantenimiento');
 GO
 
-INSERT INTO SolicitudesDeMantenimiento(IdEmpleado,fecha,estado,area,descripcion,lugar,equipo) values
+
+INSERT INTO SolicitudesDeMantenimiento(IdEmpleado,Fecha,Estado,Area,Descripcion,Lugar,Equipo) values
 (5,'2026-10-01','Finalizada','Plomeria','canilla del baño anda mal','Habitacion 6','Canilla'),
 (6,'2026-10-03','Finalizada','Electricidad','el velador no enciende','Habitacion 8','Velador'),
 (1,'2026-10-05','Finalizada','Conexion','no hay WiFi en el piso 3','Piso 3','Router'),
@@ -417,34 +430,37 @@ INSERT INTO SolicitudesDeMantenimiento(IdEmpleado,fecha,estado,area,descripcion,
 (7,'2026-11-02','En espera','Mantenimiento general','la ventana no agarra la traba','Habitacion 11','Ventana');
 GO
 
-INSERT INTO SolicitudesDeMantenimiento(IdEmpleado,fecha,area,descripcion,lugar,equipo) values
+
+INSERT INTO SolicitudesDeMantenimiento(IdEmpleado,Fecha,Area,Descripcion,Lugar,Equipo) values
 (8,'2026-11-03','Electricidad','el enchufe al lado de la cama tira chispa','Habitacion 2','Enchufe');
 GO
 
-INSERT INTO LimpiezasdeHabitaciones(horarioInicioLimpieza,horarioFinLimpieza,fechaLimpieza,idEmpleado,idHabitacion) values
-('08:00','08:40','2026-11-02',5,2),
-('08:45','09:30','2026-11-02',5,3),
-('09:35','10:20','2026-11-02',5,6),
-('07:00','07:45','2026-11-03',5,1),
-('07:50','08:30','2026-11-03',5,5),
-('08:35','09:15','2026-11-03',5,9),
-('07:00','07:40','2026-11-04',6,10),
-('07:45','08:30','2026-11-04',6,13),
-('08:35','09:20','2026-11-04',6,15),
-('09:30','10:30','2026-11-04',6,19),
-('06:30','07:10','2026-11-02',13,12),
-('07:15','07:55','2026-11-02',13,14),
-('08:00','08:45','2026-11-02',13,18),
-('06:30','07:15','2026-11-03',14,17),
-('07:20','08:00','2026-11-03',14,20),
-('08:05','08:50','2026-11-03',14,2),
-('07:00','07:45','2026-10-29',6,8),
-('07:50','08:35','2026-10-29',6,11),
-('07:00','07:40','2026-10-28',6,7),
-('07:45','08:30','2026-10-28',6,4);
+
+INSERT INTO LimpiezasdeHabitaciones(HorarioInicioLimpieza,HorarioFinLimpieza,IdEmpleado,IdHabitacion) values
+('08:00','08:40',5,2),
+('08:45','09:30',5,3),
+('09:35','10:20',5,6),
+('07:00','07:45',5,1),
+('07:50','08:30',5,5),
+('08:35','09:15',5,9),
+('07:00','07:40',6,10),
+('07:45','08:30',6,13),
+('08:35','09:20',6,15),
+('09:30','10:30',6,19),
+('06:30','07:10',13,12),
+('07:15','07:55',13,14),
+('08:00','08:45',13,18),
+('06:30','07:15',14,17),
+('07:20','08:00',14,20),
+('08:05','08:50',14,2),
+('07:00','07:45',6,8),
+('07:50','08:35',6,11),
+('07:00','07:40',6,7),
+('07:45','08:30',6,4);
 GO
 
-INSERT INTO ServiciosExtra(nombreServicio,precioTotal,horario) values
+
+INSERT INTO ServiciosExtra(NombreServicio, ValorUnitario, Horario) values
 ('Circuito de spa',18000,'10:00'),
 ('Lavanderia',6500,NULL),
 ('Traslado al aeropuerto',25000,'06:00'),
@@ -456,6 +472,7 @@ INSERT INTO ServiciosExtra(nombreServicio,precioTotal,horario) values
 ('Masaje descontracturante',22000,'16:00'),
 ('Cena romantica',45000,'21:00');
 GO
+
 
 INSERT INTO ConsumosServiciosExtra(precio,IdServicio,IdEstadia) values
 (6500,2,1),
@@ -479,3 +496,4 @@ INSERT INTO ConsumosServiciosExtra(precio,IdServicio,IdEstadia) values
 (25000,3,13),
 (22000,9,12);
 GO
+
