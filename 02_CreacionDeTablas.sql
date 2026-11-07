@@ -206,7 +206,7 @@ create table SolicitudesDeMantenimiento (
 	foreign key (IdEmpleado) references Empleados(IdEmpleado),
 	Fecha date not null,
 	Estado nvarchar(20) not null default 'En espera',
-	constraint ValidarEstado check (Estado in('En espera', 'En process','Finalizada')),
+	constraint ValidarEstado check (Estado in('En espera', 'En proceso','Finalizada')),
 	Area nvarchar(25),
 	constraint ValidarArea check (Area in('Mantenimiento general','Electricidad','Plomeria','Gas','Conexion')),
 	Descripcion nvarchar(100),
@@ -219,8 +219,8 @@ create table RegistrosDeAsistencia(
 	IdAsitencia int primary key identity(1,1),
 	IdEmpleado int,
 	foreign key (IdEmpleado) references Empleados(IdEmpleado),
-	horaEntrada datetime2 not null,
-	horaSalida datetime2 not null
+	HoraEntrada datetime2 not null,
+	HoraSalida datetime2 not null
 	)
 GO
 

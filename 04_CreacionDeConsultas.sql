@@ -3,7 +3,7 @@ use GestionDeHotel
 -- ver habitaciones disponibles
 select
     IdHabitacion,
-    IdTipo,
+    IdTipoHabitacion,
     Piso,
     Estado,
     Limpieza
@@ -18,8 +18,7 @@ select
     FechaEntrada,
     FechaSalida,
     Estado,
-    CantidadHuespedes,
-    Importe
+    CantidadHuespedes
 from Reservas
 where FechaEntrada >= '2026-11-01' and FechaEntrada <= '2026-11-30'
 order by FechaEntrada asc;
@@ -46,7 +45,7 @@ select
     TH.CapacidadHabitacion
 from Reservas R
 inner join Habitaciones H on R.IdHabitacion = H.IdHabitacion
-inner join tiposdeHabitacion TH on H.IdTipo = TH.IdTipoHabitacion
+inner join tiposdeHabitacion TH on H.IdTipoHabitacion = TH.IdTipoHabitacion
 order by R.FechaEntrada asc;
 
 -- que huespédes estan asociados a cada reserva
@@ -57,7 +56,7 @@ select
     H.IdHuesped,
     H.nombreHuesped,
     H.correoHuesped,
-    H.numTelefono
+    H.NumeroDeTelefono
 from Reservas R
 inner join ReservasHuespedes RH on R.IdReserva = RH.IdReserva
 inner join Huespedes H on RH.IdHuesped = H.IdHuesped
@@ -77,20 +76,19 @@ from Estadias E
 inner join Reservas R on E.IdReserva = R.IdReserva
 order by E.FechaHoraCheckIn desc;
 
--- consultar tareas de limpieza por empleado
+-- consultar tareas de limpieza por empleado (SACAR)
 select
     L.IdLimpieza,
     E.IdEmpleado,
     E.Nombre,
     H.IdHabitacion,
     H.Piso,
-    L.FechaLimpieza,
-    L.horarioInicioLimpieza,
-    L.horarioFinLimpieza
+    L.HorarioInicioLimpieza,
+    L.HorarioFinLimpieza
 from LimpiezasdeHabitaciones L
 inner join Empleados E on L.IdEmpleado = E.IdEmpleado
 inner join Habitaciones H on L.IdHabitacion = H.IdHabitacion
-order by L.FechaLimpieza desc;
+order by L.HorarioFinLimpieza desc;
 
 --consultar los consumos que realizaron los huespedes
 select
@@ -98,9 +96,8 @@ select
     H.nombreHuesped,
     C.IdConsumo,
     C.FechaConsumo,
-    P.nombreProducto as Producto,
-    PC.Cantidad,
-    PC.PrecioTotal
+    P.NombreProducto as Producto,
+    PC.Cantidad
 from ConsumosdeHuesped C
 inner join Huespedes H on C.IdHuesped = H.IdHuesped
 inner join ProductosPorConsumo PC on C.IdConsumo = PC.IdConsumo
@@ -114,7 +111,7 @@ select
     TH.NombreTipo,
     count(R.IdReserva) as CantidadReservas
 from TiposdeHabitacion TH
-inner join Habitaciones H on TH.idTipoHabitacion = H.IdTipo
+inner join Habitaciones H on TH.idTipoHabitacion = H.IdTipoHabitacion
 inner join Reservas R on H.IdHabitacion = R.IdHabitacion
 group by    TH.idTipoHabitacion,
     TH.NombreTipo
@@ -123,11 +120,12 @@ order by CantidadReservas desc;
 --cuanto gasto un huespéd en productos
 select
     H.IdHuesped,
-    H.nombreHuesped,
-    sum(PC.PrecioTotal) as TotalGastado
+    H.NombreHuesped,
+    sum(PC.Cantidad * P.Precio) as TotalGastado
 from Huespedes H
 inner join ConsumosDeHuesped C on H.IdHuesped = C.IdHuesped
 inner join ProductosPorConsumo PC on C.IdConsumo = PC.IdConsumo
+inner join Productos P on PC.Idproducto = P.IdProducto
 group by
     H.IdHuesped,
     H.nombreHuesped
@@ -137,7 +135,7 @@ order by TotalGastado desc;
 select
     year(R.FechaReserva) as Anio,
     month(R.FechaReserva) as Mes,
-    sum(R.Importe) as IngresosReservas
+    sum(R.PrecioPorNoche * DATEDIFF(day, R.FechaEntrada, R.FechaSalida)) as IngresosReservas
 from Reservas R
 group by
     year(R.FechaReserva),
@@ -208,7 +206,7 @@ order by FechaEntrada asc;
 -- encontrar habitaciones que nunca tuvieron reservas
 select
     H.IdHabitacion,
-    H.IdTipo,
+    H.IdTipoHabitacion,
     H.Piso,
     H.Estado
 from Habitaciones H
@@ -225,7 +223,7 @@ declare @FechaSalida date = '2026-11-15';
 
 select
     H.IdHabitacion,
-    H.IdTipo,
+    H.IdTipoHabitacion,
     H.Piso,
     H.Estado
 from Habitaciones H
@@ -241,7 +239,7 @@ select
     R.IdReserva,
     R.FechaEntrada,
     R.FechaSalida,
-    R.Importe,
+    R.PrecioPorNoche * DATEDIFF (day, R.FechaEntrada, R.FechaSalida) as ImporteCalculado,
     R.Estado
 from Reservas R
 left join Pagos P on R.IdReserva = P.IdReserva
@@ -278,18 +276,6 @@ group by
     E.Nombre
 order by HorasTrabajadas desc;
 
---ver empleados que no trabajaron un dia
-declare @Fecha date = '2026-11-02';
-
-select
-    E.IdEmpleado,
-    E.Nombre
-from Empleados E
-where not exists (
-    select 1
-    from RegistrosDeAsistencia A
-    where A.IdEmpleado = E.IdEmpleado and A.Fecha = @Fecha
-);
 
 --consultar estados de problemas del hotel
 
