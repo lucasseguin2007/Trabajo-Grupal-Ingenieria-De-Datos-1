@@ -42,13 +42,10 @@ create procedure sp_HabitacionLimpia
 @IdLimpieza int
 as 
 begin
-update LimpiezasdeHabitaciones
-set HorarioFinLimpieza = getdate()
-where IdLimpieza = @IdLimpieza;
 update Habitaciones
 set Limpieza = 'Limpia'
 where IdHabitacion = (
-select IdHabitacion from LimpiezasdeHabitaciones
+select IdHabitacion from LimpiezasDeHabitaciones
 where IdLimpieza = @IdLimpieza);
 end;
 go
@@ -59,15 +56,20 @@ as
 begin
 declare @IdHabitacion int; 
 declare @CantidadHuespedes int;
+
 declare @TablaTemporal table (Id int, IdTipo int, Est varchar(15), Limp varchar(30), Piso int, NombreTipo nvarchar(30), Capacidad int);
-select @CantidadHuespedes = CantidadHuespedes from Reservas
-where IdReserva = @IdReserva
+select @CantidadHuespedes = count(*) from ReservasHuespedes
+where IdReserva = @IdReserva;
 insert into @TablaTemporal
 exec sp_HabitacionDisponible @CantidadHuespedes;
-select top 1 @IdHabitacion = Id from @TablaTemporal
+select top 1 @IdHabitacion = Id from @TablaTemporal;
+if @IdHabitacion is null
+begin
+    ;throw 50004, 'No hay habitaciones disponibles con capacidad suficiente.', 1;
+end;
 update Estadias
 set FechaHoraCheckIn = getdate()
-where IdReserva = @IdReserva
+where IdReserva = @IdReserva;
 update Reservas
 set IdHabitacion = @IdHabitacion
 where IdReserva = @IdReserva;
@@ -75,6 +77,7 @@ update Habitaciones
 set Estado = 'Ocupada'
 where IdHabitacion = @IdHabitacion;
 end;
+go
 go
 
 create procedure sp_PlazasLibres
@@ -95,6 +98,10 @@ declare @TablaTemporal table (Id int,Estado nvarchar(20));
 insert into @TablaTemporal
 exec sp_PlazasLibres;
 select top 1 @IdPlaza = Id from @TablaTemporal;
+if @IdPlaza is null
+begin
+    ;throw 50007, 'No hay plazas de estacionamiento disponibles.', 1;
+end;
 insert into VehiculosPlazas (IdVehiculo, IdPlazaDeEstacionamiento)
 values (@IdVehiculo, @IdPlaza);
 update PlazasDeEstacionamiento
