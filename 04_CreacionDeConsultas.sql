@@ -76,19 +76,6 @@ from Estadias E
 inner join Reservas R on E.IdReserva = R.IdReserva
 order by E.FechaHoraCheckIn desc;
 
--- consultar tareas de limpieza por empleado (SACAR)
-select
-    L.IdLimpieza,
-    E.IdEmpleado,
-    E.Nombre,
-    H.IdHabitacion,
-    H.Piso,
-    L.HorarioInicioLimpieza,
-    L.HorarioFinLimpieza
-from LimpiezasdeHabitaciones L
-inner join Empleados E on L.IdEmpleado = E.IdEmpleado
-inner join Habitaciones H on L.IdHabitacion = H.IdHabitacion
-order by L.HorarioFinLimpieza desc;
 
 --consultar los consumos que realizaron los huespedes
 select
