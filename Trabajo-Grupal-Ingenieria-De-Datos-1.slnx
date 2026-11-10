@@ -1,0 +1,14 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Default" />
+    <Platform Name="Default" />
+  </Configurations>
+  <Folder Name="/Elementos de la solución/">
+    <File Path="01_CreacionDeLaBaseDeDatos.sql" />
+    <File Path="02_CreacionDeTablas.sql" />
+    <File Path="03_InsertarDatos.sql" />
+    <File Path="04_CreacionDeConsultas.sql" />
+    <File Path="05_Subconsultas.sql" />
+    <File Path="06_Triggers.sql" />
+  </Folder>
+</Solution>
