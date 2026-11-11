@@ -118,7 +118,7 @@ begin
 	inner join Reservas on Reservas.IdReserva = Estadias.IdReserva
 	WHERE Reservas.IdHabitacion = @IdHabitacion and Estadias.Estado = 'En curso'
 	select @futuras = count(*) from Reservas
-	where IdHabitacion = @IdHabitacion and FechaEntrada > getdate() and Estado <> 'Cancelada'
+	where IdHabitacion = @IdHabitacion and FechaEntrada > getdate() and Estado in ('Confirmada','Pendiente')
 	if @ahora > 0
 		update Habitaciones set Estado = 'Ocupada' where IdHabitacion = @IdHabitacion
 	else if @futuras > 0
@@ -133,7 +133,8 @@ close actualizarHabitaciones;
 deallocate actualizarHabitaciones;
 
 --crear tareas de limpieza a habitaciones sucias
-declare @idlimpHabitacion int, @estado varchar(30)
+declare @idlimpHabitacion int, @estado varchar(30), @empleado int
+declare @empleadoLibre table (IdEmpleado int, Nombre nvarchar(50))
 declare limpiarHabitaciones cursor fast_forward for select IdHabitacion from Habitaciones
 
 open limpiarHabitaciones
@@ -144,9 +145,9 @@ begin
 	where Habitaciones.IdHabitacion = @IdlimpHabitacion
 	if @estado = 'Pendiente'
 	begin
-		declare @empleado int
-		set @empleado = 
-		fn_empleadoLibre()  ---Hay que crear funcion que de empleadso que esten libres
+		delete from @empleadoLibre
+		insert into @empleadoLibre exec sp_EmpleadoLimpiezaLibre
+		select @empleado = IdEmpleado from @empleadoLibre
 		insert into LimpiezasdeHabitaciones (HorarioInicioLimpieza, HorarioFinLimpieza, IdEmpleado, IdHabitacion)
 		VALUES (getdate(),dateadd(hour,1,getdate()), @empleado, @idlimpHabitacion);
 		Update Habitaciones
