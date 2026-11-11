@@ -114,6 +114,4 @@ deny select, insert, update, delete on pagos to usuario_huesped;
 deny select, insert, update, delete on gastos to usuario_huesped;
 deny delete on reservas to usuario_huesped;
  
-grant select on gastos to usuario_seguridad;
-revoke select on gastos from usuario_seguridad;
 go
