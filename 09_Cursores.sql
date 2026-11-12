@@ -1,144 +1,121 @@
-Use GestionDeHotel;
-GO
-
---Calcular lo que gasto cada huesped en comparacion a sus dias de estadia
-
-DECLARE @IdHuesped INT;
-
-DECLARE calcGastoProm CURSOR FAST_FORWARD FOR
-SELECT IdHuesped FROM Huespedes;
-
-OPEN calcGastoProm;
-FETCH NEXT FROM calcGastoProm INTO @IdHuesped;
-
-WHILE @@fetch_status = 0
-BEGIN
-	DECLARE @Dias int, @Gasto decimal(12,2), @GastoPorDia decimal(12,2)
-	select @Dias = isnull(SUM(DATEDIFF(day ,Estadias.FechaHoraCheckIn, ISNULL(Estadias.FechaHoraCheckOut,getdate()))),0)
-	from ReservasHuespedes
-	inner join Estadias ON Estadias.IdReserva = ReservasHuespedes.IdReserva
-	where ReservasHuespedes.IdHuesped = @IdHuesped;
-	select @Gasto = isnull(sum(ProductosPorConsumo.Cantidad * Productos.Precio),0)
-	from ConsumosDeHuesped
-	inner join ProductosPorConsumo ON ProductosPorConsumo.IdConsumo = ConsumosDeHuesped.IdConsumo
-	inner join Productos ON Productos.IdProducto = ProductosPorConsumo.IdProducto
-	Where ConsumosDeHuesped.IdHuesped = @IdHuesped;
-
-	if @Dias = 0
-		set @GastoPorDia = 0
-	else
-		set @GastoPorDia = @Gasto/@Dias;
-
-	PRINT('El huesped de id: '+ cast(@IdHuesped as NVARCHAR) + ' estuvo ' + CAST(@Dias as NVARCHAR) + ' dias y gasto: ' + CAST(@Gasto as NVARCHAR) + ' y su gasto por dia fue: ' + CAST(@GastoPorDia as NVARCHAR))
-	fetch next from calcGastoProm INTO @IdHuesped
-	END;
-
-	close calcGastoProm;
-	deallocate calcGastoProm;
-
---Calcular que empleado hizo facturas por mas plata
-
-declare @IdEmpleado INT, @maxTotal decimal(12,2), @IdEmpleadomax int
-set @maxTotal = -1
-set @IdEmpleado = -1
-declare masPlataxFactEmpleado CURSOR FAST_FORWARD for select IdEmpleado FROM Empleados
-
-open masPlataxFactEmpleado;
-
-fetch next from masPlataxFactEmpleado into @IdEmpleado
-
+--Cancelar las reservas pendientes cuya fecha de entrada ya paso
+ 
+declare @IdReservaVencida int
+ 
+declare cur_cancelarReservasVencidas CURSOR FAST_FORWARD for
+select IdReserva from Reservas
+where Estado = 'Pendiente' and FechaEntrada < getdate()
+ 
+open cur_cancelarReservasVencidas
+ 
+fetch next from cur_cancelarReservasVencidas into @IdReservaVencida
+ 
 while @@FETCH_STATUS = 0
 begin
-	declare @Total decimal(12,2)
-	select @Total = isnull(sum(DetallesFactura.PrecioUnitario * DetallesFactura.Cantidad + DetallesFactura.Impuesto),0) from Facturas
-	inner join DetallesFactura on DetallesFactura.IdFactura = Facturas.IdFactura
-	where Facturas.IdEmpleado = @IdEmpleado and DetallesFactura.Estado <> 'Anulada'
-
-	if @Total >= @maxTotal
-	begin
-	 set @maxTotal= @Total
-	 set @IdEmpleadomax = @IdEmpleado
-	end;
-	fetch next from masPlataxFactEmpleado into @IdEmpleado
+	Update Reservas
+	set Estado = 'Cancelada'
+	where Reservas.IdReserva = @IdReservaVencida
+ 
+	PRINT('Se cancelo la reserva de id: ' + cast(@IdReservaVencida as NVARCHAR) + ' porque estaba pendiente y su fecha de entrada ya paso')
+	fetch next from cur_cancelarReservasVencidas into @IdReservaVencida
 end;
-
-PRINT('El empleado que mas facturo fue ' + cast(@IdEmpleadomax as nvarchar)+ ' con ' + CAST(@MaxTotal as NVARCHAR))
-
-close masPlataxFactEmpleado;
-deallocate masPlataxFactEmpleado;
-
-
---Agregar 10% de costo a las reservas que su estadia termino despues del fin de su reserva
-
-declare @IdReserva int, @fechasalida date, @fechasalidaprometida date
-
-declare agregarCostoMulta CURSOR FAST_FORWARD for select IdReserva from Reservas
-
-open agregarCostoMulta
-
-fetch next from agregarCostoMulta into @IdReserva
-
+ 
+close cur_cancelarReservasVencidas;
+deallocate cur_cancelarReservasVencidas;
+ 
+ 
+--Hacer el check-out automatico de las estadias en curso que ya pasaron su fecha de salida, y dejar la habitacion pendiente de limpieza
+ 
+declare @IdEstadiaVencida int, @IdHabitacionVencida int
+ 
+declare cur_checkOutAutomatico CURSOR FAST_FORWARD for
+select Estadias.IdEstadia, Reservas.IdHabitacion from Estadias
+inner join Reservas on Reservas.IdReserva = Estadias.IdReserva
+where Estadias.Estado = 'En curso' and Reservas.FechaSalida < getdate()
+ 
+open cur_checkOutAutomatico
+ 
+fetch next from cur_checkOutAutomatico into @IdEstadiaVencida, @IdHabitacionVencida
+ 
 while @@FETCH_STATUS = 0
 begin
-	set @fechasalida = null
-	set @fechasalidaprometida = null
-	select @fechasalida = Estadias.FechaHoraCheckOut from Reservas
-	inner join Estadias on Estadias.IdReserva = Reservas.IdReserva
-	where @IdReserva = Reservas.IdReserva
-
-	select @fechasalidaprometida = Reservas.FechaSalida from Reservas
-	where Reservas.IdReserva = @IdReserva
-	if (@fechasalida>@fechasalidaprometida)
-	begin
-		Update Reservas
-		set PrecioPorNoche = PrecioPorNoche*1.10
-		where Reservas.IdReserva = @IdReserva
-	end
-
-	fetch next from agregarCostoMulta into @IdReserva
+	Update Estadias
+	set FechaHoraCheckOut = getdate(), Estado = 'Finalizada'
+	where Estadias.IdEstadia = @IdEstadiaVencida
+ 
+	Update Habitaciones
+	set Limpieza = 'Pendiente'
+	where Habitaciones.IdHabitacion = @IdHabitacionVencida
+ 
+	PRINT('Check-out automatico de la estadia de id: ' + cast(@IdEstadiaVencida as NVARCHAR) + ' en la habitacion de id: ' + cast(@IdHabitacionVencida as NVARCHAR))
+	fetch next from cur_checkOutAutomatico into @IdEstadiaVencida, @IdHabitacionVencida
 end;
-
-close agregarCostoMulta;
-deallocate agregarCostoMulta;
-
---actualizar habitaciones(si tienen estadia en curso ocupado sino disponible, si tiene reserva futura reservada
-
-declare @IdHabitacion int, @ahora int, @futuras int
-
-declare actualizarHabitaciones cursor fast_forward for
+ 
+close cur_checkOutAutomatico;
+deallocate cur_checkOutAutomatico;
+ 
+ 
+--Reporte de ocupacion por habitacion (cantidad de estadias y dias ocupada)
+ 
+declare @IdHabitacionRep int, @CantEstadias int, @DiasOcupada int
+ 
+declare cur_reporteOcupacion CURSOR FAST_FORWARD for
 select IdHabitacion from Habitaciones
-
-open actualizarHabitaciones
-
-fetch next from actualizarHabitaciones into @IdHabitacion
-
+ 
+open cur_reporteOcupacion
+ 
+fetch next from cur_reporteOcupacion into @IdHabitacionRep
+ 
 while @@FETCH_STATUS = 0
 begin
-	select @ahora = count(*) from Estadias
+	select @CantEstadias = count(*),
+	@DiasOcupada = isnull(SUM(DATEDIFF(day, Estadias.FechaHoraCheckIn, ISNULL(Estadias.FechaHoraCheckOut,getdate()))),0)
+	from Estadias
 	inner join Reservas on Reservas.IdReserva = Estadias.IdReserva
-	WHERE Reservas.IdHabitacion = @IdHabitacion and Estadias.Estado = 'En curso'
-	select @futuras = count(*) from Reservas
-	where IdHabitacion = @IdHabitacion and FechaEntrada > getdate() and Estado in ('Confirmada','Pendiente')
-	if @ahora > 0
-		update Habitaciones set Estado = 'Ocupada' where IdHabitacion = @IdHabitacion
-	else if @futuras > 0
-		update Habitaciones set Estado = 'Reservada' where IdHabitacion = @IdHabitacion
-	else
-		update Habitaciones set Estado = 'Disponible' where IdHabitacion = @IdHabitacion
-
-	fetch next from actualizarHabitaciones into @IdHabitacion
+	where Reservas.IdHabitacion = @IdHabitacionRep
+ 
+	PRINT('La habitacion de id: ' + cast(@IdHabitacionRep as NVARCHAR) + ' tuvo ' + CAST(@CantEstadias as NVARCHAR) + ' estadias y estuvo ocupada ' + CAST(@DiasOcupada as NVARCHAR) + ' dias')
+	fetch next from cur_reporteOcupacion into @IdHabitacionRep
 end;
+ 
+close cur_reporteOcupacion;
+deallocate cur_reporteOcupacion;
+ 
+ --Reporte de consumo por producto
+ 
+declare @IdProductoRep int, @UnidadesConsumidas int, @TotalGenerado decimal(12,2)
+ 
+declare cur_reporteProductos CURSOR FAST_FORWARD for
+select IdProducto from Productos
+ 
+open cur_reporteProductos
+ 
+fetch next from cur_reporteProductos into @IdProductoRep
+ 
+while @@FETCH_STATUS = 0
+begin
+	select @UnidadesConsumidas = isnull(SUM(ProductosPorConsumo.Cantidad),0),
+	@TotalGenerado = isnull(SUM(ProductosPorConsumo.Cantidad * Productos.Precio),0)
+	from ProductosPorConsumo
+	inner join Productos on Productos.IdProducto = ProductosPorConsumo.IdProducto
+	where ProductosPorConsumo.IdProducto = @IdProductoRep
+ 
+	PRINT('El producto de id: ' + cast(@IdProductoRep as NVARCHAR) + ' se consumio ' + CAST(@UnidadesConsumidas as NVARCHAR) + ' veces y genero: ' + CAST(@TotalGenerado as NVARCHAR))
+	fetch next from cur_reporteProductos into @IdProductoRep
+end;
+ 
+close cur_reporteProductos;
+deallocate cur_reporteProductos;
+ 
 
-close actualizarHabitaciones;
-deallocate actualizarHabitaciones;
 
 --crear tareas de limpieza a habitaciones sucias
 declare @idlimpHabitacion int, @estado varchar(30), @empleado int
 declare @empleadoLibre table (IdEmpleado int, Nombre nvarchar(50))
-declare limpiarHabitaciones cursor fast_forward for select IdHabitacion from Habitaciones
+declare cur_limpiarHabitaciones cursor fast_forward for select IdHabitacion from Habitaciones
 
-open limpiarHabitaciones
-fetch next from limpiarHabitaciones  into @idlimpHabitacion
+open cur_limpiarHabitaciones
+fetch next from cur_limpiarHabitaciones  into @idlimpHabitacion
 while @@FETCH_STATUS=0
 begin
 	select @estado = Habitaciones.Limpieza from Habitaciones
@@ -154,8 +131,8 @@ begin
 		set Limpieza = 'Limpia'
 		where Habitaciones.IdHabitacion = @idlimpHabitacion
  	end;
-	fetch next from limpiarHabitaciones  into @idlimpHabitacion
+	fetch next from cur_limpiarHabitaciones  into @idlimpHabitacion
 end;
 
-close limpiarHabitaciones;
-deallocate limpiarHabitaciones;
+close cur_limpiarHabitaciones;
+deallocate cur_limpiarHabitaciones;
