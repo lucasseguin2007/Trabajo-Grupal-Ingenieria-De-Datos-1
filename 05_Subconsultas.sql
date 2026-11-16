@@ -1,35 +1,39 @@
 use GestionDeHotel
 go
 
-select nombreServicio, precioTotal from ServiciosExtra
-where precioTotal > (select AVG(precioTotal) from ServiciosExtra
+select NombreServicio, ValorUnitario from ServiciosExtra
+where ValorUnitario > (select AVG(ValorUnitario) from ServiciosExtra
 );
 
 select Nombre, Sueldo from Empleados
 where Sueldo > (select Avg(Sueldo) from Empleados
 );
 
-select IdReserva, Importe from Reservas
-where Importe > (select max(Importe) from Reservas where FechaReserva between '2023-01-01' and '2023-12-31'
+select IdReserva, PrecioPorNoche * DATEDIFF(DAY, FechaEntrada, FechaSalida) as ImporteCalculado
+from Reservas
+where PrecioPorNoche * DATEDIFF(DAY, FechaEntrada, FechaSalida) > (
+    select MAX(PrecioPorNoche * DATEDIFF(DAY, FechaEntrada, FechaSalida))
+    from Reservas
+    where FechaReserva BETWEEN '2026-09-01' AND '2026-09-30'
 );
 
 select IdHabitacion, Piso from Habitaciones h
-inner join tiposdeHabitacion th
-on h.IdTipo = th.idTipoHabitacion
-where th.costoHabitacion = (select max(costoHabitacion) from tiposdeHabitacion
+inner join TiposDeHabitacion th
+on h.IdTipoHabitacion = th.idTipoHabitacion
+where th.CostoHabitacion = (select max(CostoHabitacion) from TiposDeHabitacion
 ); 
 
-select nombreHuesped, correoHuesped from Huespedes h
+select NombreHuesped, CorreoHuesped from Huespedes h
 where not exists (
-select idHuesped from vehiculos v
-where h.idHuesped = v.idHuesped
+select IdHuesped from Vehiculos v
+where h.IdHuesped = v.IdHuesped
 );
 
 select Nombre, DNI, Correo from Empleados e
 inner join LimpiezasdeHabitaciones l
 on e.IdEmpleado = l.idEmpleado
 group by e.Nombre, e.DNI, e.Correo, e.IdEmpleado
-having count(l.idLimpieza) = (select max(CantidadLimpiezas)
+having count(l.IdLimpieza) = (select max(CantidadLimpiezas)
 from (
-select count(idLimpieza) as CantidadLimpiezas from LimpiezasdeHabitaciones
+select count(IdLimpieza) as CantidadLimpiezas from LimpiezasdeHabitaciones
 group by IdEmpleado) as Limpiezas );

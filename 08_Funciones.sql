@@ -1,4 +1,5 @@
-use GestionDeHotel
+use GestionDeHotel;
+go
 -- Calcular importe de una reserva (recibe identificador de reserva y devuelve cuanto cuesta el alojamiento)
 create function fn_ImporteReserva (@IdReserva INT) returns decimal(12,2) as
 begin
@@ -9,10 +10,10 @@ begin
     where IdReserva = @IdReserva;
     return @Importe;
 end;
-
+GO
 -- calcula el importe de una reserva especifica (10 en este caso)
 select dbo.fn_ImporteReserva(10) as ImporteReserva;
-
+GO
 
 -- calcular saldo pendiente de una reserva
 create or alter function fn_SaldoPendienteReserva (@IdReserva INT) returns decimal(12,2) as
@@ -24,7 +25,7 @@ begin
     select
         @TotalPagado = coalesce(sum(Importe), 0)
     from Pagos
-    where IdReserva = @IdReserva;
+    where IdReserva = @IdReserva and Estado = 'Aprobado';
     if @ImporteReserva is null
         return null;
         set @Saldo = @ImporteReserva - @TotalPagado;
@@ -32,12 +33,14 @@ begin
             set @Saldo = 0;
     return @Saldo;
 End;
+GO
 
 --consultar saldo de todas las reservas 
 select
     IdReserva,
     dbo.fn_SaldoPendienteReserva(IdReserva) as SaldoPendiente
 from Reservas;
+GO
 
 --consultar cuanto gasto un huesped en productos
 create function fn_TotalGastadoHuesped (@IdHuesped INT) returns decimal(12,2) as
@@ -51,7 +54,7 @@ begin
     where C.IdHuesped = @IdHuesped;
     return @TotalGastado;
 END;
-
+GO
 -- muestra cuanto gasto cada huesped
 select
     H.IdHuesped,
@@ -59,7 +62,7 @@ select
     dbo.fn_TotalGastadoHuesped(H.IdHuesped) as TotalGastado
 from Huespedes H
 order by TotalGastado desc;
-
+GO
 --consultar habitaciones disponibles para un periodo
 
 create or alter function fn_HabitacionesDisponibles (@FechaEntrada date, @FechaSalida date) returns table as
@@ -79,11 +82,11 @@ return (
         (
             select 1
             from Reservas R
-            where R.IdHabitacion = H.IdHabitacion AND R.FechaEntrada < @FechaSalida AND R.FechaSalida > @FechaEntrada
+            where R.IdHabitacion = H.IdHabitacion AND R.FechaEntrada < @FechaSalida AND R.FechaSalida > @FechaEntrada and R.Estado <> 'Cancelada'
         )
 );
-
+GO
 select * from dbo.fn_HabitacionesDisponibles('2026-11-10', '2026-11-15');
-
+GO
 
 
