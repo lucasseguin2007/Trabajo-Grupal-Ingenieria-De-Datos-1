@@ -36,7 +36,7 @@ AS
 			ON i.IdReserva = d.IdReserva
 			WHERE i.Estado = 'Cancelada'
 			AND NOT (d.Estado = 'Cancelada')
-			AND CAST(GETDATE() AS DATE) > DATEADD(DAY, -1, i.FechaEntrada)
+			AND GETDATE() >= DATEADD(HOUR,14,CAST(DATEADD(DAY,-1,i.FechaEntrada) as datetime2))
 		)
 		BEGIN
 			;THROW 50002,'No se puede cancelar la reserva el dia del Check In.',1;
@@ -226,6 +226,23 @@ AS
 			WHERE vp.IdPlazaDeEstacionamiento = p.IdPlazaDeEstacionamiento
 		);
 	END;
+GO
+
+--11 Trigger: validar que haya algun huespued titular antes de confirmar la reserva
+CREATE TRIGGER trg_ValidarTitularAlConfirmar
+ON Reservas
+AFTER UPDATE
+AS
+	BEGIN
+		IF exists(
+			SELECT 1
+			FROM inserted i
+			WHERE i.Estado = 'Confirmada' and (SELECT COUNT(*) FROM ReservasHuespedes rh WHERE rh.IdReserva = I.IdReserva AND rh.EsTitular = 1) <> 1
+		)
+		BEGIN
+			;THROW 50024, 'La reserva debe tener exactamente un titular para confirmarase.',1;
+		END;
+END;
 GO
 		
 
