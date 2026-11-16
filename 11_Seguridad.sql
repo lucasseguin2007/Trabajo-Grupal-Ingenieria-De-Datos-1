@@ -78,16 +78,17 @@ deny select, insert, update, delete on facturas to usuario_recepcionista;
 deny select, insert, update, delete on gastos to usuario_recepcionista;
 deny delete on reservas to usuario_recepcionista;
 deny delete on estadias to usuario_recepcionista;
- 
+
+
 grant select, insert, update on limpiezasdehabitaciones to usuario_limpieza;
 grant select, update on habitaciones to usuario_limpieza;
- 
+
 grant select, insert, update on solicitudesdemantenimiento to usuario_mantenimiento;
- 
 grant select on vehiculos to usuario_estacionamiento;
 grant select, insert, update on plazasdeestacionamiento to usuario_estacionamiento;
 grant select, insert, update on vehiculosplazas to usuario_estacionamiento;
- 
+
+
 grant select, insert, update on facturas to usuario_contable;
 grant select, insert, update on detallesfactura to usuario_contable;
 grant select, insert, update on pagos to usuario_contable;
@@ -95,23 +96,30 @@ grant select, insert, update on gastos to usuario_contable;
 grant select on reservas to usuario_contable;
 grant select on vw_estadocuentareservas to usuario_contable;
 grant execute on fn_saldopendientereserva to usuario_contable;
- 
+
+
+
 grant select, insert, update on productos to usuario_inventarios;
 grant select on categorias to usuario_inventarios;
- 
+
 grant select on huespedes to usuario_seguridad;
 grant select on reservas to usuario_seguridad;
 grant select on reservashuespedes to usuario_seguridad;
 deny insert, update, delete on huespedes to usuario_seguridad;
 deny insert, update, delete on reservas to usuario_seguridad;
- 
+
+
 grant select, insert, update on serviciosextra to usuario_serviciosextra;
 grant select, insert, update on consumosserviciosextra to usuario_serviciosextra;
 grant select on estadias to usuario_serviciosextra;
- 
+
+
+
 deny select, insert, update, delete on empleados to usuario_huesped;
 deny select, insert, update, delete on pagos to usuario_huesped;
 deny select, insert, update, delete on gastos to usuario_huesped;
 deny delete on reservas to usuario_huesped;
- 
+
+grant select on gastos to usuario_seguridad;
+revoke select on gastos from usuario_seguridad;
 go
