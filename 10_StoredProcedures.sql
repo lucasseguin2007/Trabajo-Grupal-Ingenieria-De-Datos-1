@@ -33,7 +33,7 @@ select top 1 h.IdHabitacion, h.IdTipoHabitacion, h.Estado, h.Limpieza, h.Piso,th
 inner join TiposDeHabitacion th
 on h.IdTipoHabitacion = th.IdTipoHabitacion
 and th.CapacidadHabitacion >= @CantidadHuespedes
-where Estado = 'Desocupada' and Limpieza = 'Limpia'
+where Estado = 'Disponible' and Limpieza = 'Limpia'
 order by th.CapacidadHabitacion asc;
 end;
 go
@@ -57,33 +57,79 @@ begin
     declare @IdHabitacion int; 
     declare @CantidadHuespedes int;
 
-    declare @TablaTemporal table (Id int, IdTipo int, Est varchar(15), Limp varchar(30), Piso int, NombreTipo nvarchar(30), Capacidad int);
     BEGIN TRY
         BEGIN TRANSACTION;
         if not exists (
         select 1
         from Reservas
-        where IdReserva = @IdReserva
+        where IdReserva = @IdReserva and Estado = 'Confirmada'
         )
         begin
-            ;throw 50011, 'La reserva indicada no existe.',1;
+            ;throw 50021, 'La reserva debe estar confirmada para realizar el check-in.',1;
         end;
-
-        select @CantidadHuespedes = count(*) from ReservasHuespedes
-        where IdReserva = @IdReserva;
-        insert into @TablaTemporal
-        exec sp_HabitacionDisponible @CantidadHuespedes;
-        select top 1 @IdHabitacion = Id from @TablaTemporal;
-        if @IdHabitacion is null
+        if not exists (
+            select 1
+            from Reservas
+            where IdReserva = @IdReserva and FechaEntrada = CAST(GETDATE() as DATE)
+        )
+        Begin
+            ;throw 50022,'El check-in debe realizarse en la fecha de entrada de la reserva.',1;
+        end;
+        if exists (
+            select 1
+            from Estadias
+            Where IdReserva = @IdReserva and (FechaHoraCheckIn is not null or Estado in ('En curso','Finalizada'))
+        )
         begin
-             ;throw 50004, 'No hay habitaciones disponibles con capacidad suficiente.', 1;
+            ;throw 50023, 'La reserva ya tiene un check-in registrado.',1;
         end;
-        update Estadias
-        set FechaHoraCheckIn = getdate()
-        where IdReserva = @IdReserva;  
-        update Reservas
-        set IdHabitacion = @IdHabitacion
+        select @IdHabitacion = IdHabitacion
+        from Reservas
         where IdReserva = @IdReserva;
+
+        if @IdHabitacion is null
+        begin 
+            ;throw 50012,'La reserva no tiene una habitacion asignada.',1;
+        end;
+        if not exists (
+            select 1
+            from Habitaciones 
+            where IdHabitacion = @IdHabitacion and Estado in ('Disponible', 'Reservada') and Limpieza = 'Limpia'
+           )
+        begin 
+            ;throw 50019, 'La habitacion reservada no esta disponible para el check-in',1;
+        end;
+        select @CantidadHuespedes = count(*)
+        from ReservasHuespedes
+        where IdReserva = @IdReserva;
+        if exists (
+            select 1
+            from Habitaciones H
+            inner join TiposDeHabitacion T
+                on H.IdTipoHabitacion = T.IdTipoHabitacion
+            where H.IdHabitacion = @IdHabitacion
+                and @CantidadHuespedes > t.CapacidadHabitacion
+            )
+        begin
+            ;throw 50020, 'La cantidad de huespedes supera la capacidad de la habitacion.',1;
+        end;
+        if exists(
+            select 1
+            from Estadias
+            where IdReserva = @IdReserva
+           )
+        BEGIN
+            update Estadias
+            set FechaHoraCheckIn = GETDATE(), Estado = 'En curso', FechaHoraCheckOut = null
+            where IdReserva = @IdReserva;
+        END
+        ELSE
+        begin 
+            insert into Estadias
+                (IdReserva,FechaHoraCheckIn,FechaHoraCheckOut,Estado)
+            Values
+                (@IdReserva,GETDATE(), null,'En curso')
+        end;
         update Habitaciones
         set Estado = 'Ocupada'
         where IdHabitacion = @IdHabitacion;
@@ -98,6 +144,7 @@ begin
     end catch
 end;
 go
+
 
 create procedure sp_PlazasLibres
 as 

@@ -14,12 +14,9 @@ create table HorarioEmpleado (
 	IdHorarioEmpleado int primary key identity (1,1),
 	IdEmpleado int unique not null,
 	foreign key (IdEmpleado) references Empleados (IdEmpleado),
-	DiaSemana nvarchar(15) not null,
-	constraint ValidarDia check (DiaSemana in ('Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo')),
 	HoraEntrada Time not null,
 	HoraSalida Time not null
 	)
-
 GO
 
 create table TiposDeHabitacion(

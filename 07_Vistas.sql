@@ -1,7 +1,6 @@
 use GestionDeHotel;
-
+GO
 --Ver informacion completa de las reservas
-
 Create view vw_ReservasDetalle as
 Select
 	R.IdReserva,
@@ -9,7 +8,8 @@ Select
 	R.FechaEntrada,
 	R.FechaSalida,
 	R.Estado as EstadoReserva,
-	R.CantidadHuespedes,
+	(Select count(*) from ReservasHuespedes RH
+	Where RH.IdReserva = R.IdReserva) as CantidadHuespedes,
 	R.PrecioPorNoche,
 	DATEDIFF(day, R.FechaEntrada, R.FechaSalida) as CantidadNoches,
 	R.PrecioPorNoche * DATEDIFF(day, R.FechaEntrada, R.FechaSalida) as ImporteCalculado,
@@ -21,13 +21,11 @@ Select
 	From Reservas R
 	inner join Habitaciones h on R.IdHabitacion = H.IdHabitacion
 	inner join TiposDeHabitacion T on H.IdTipoHabitacion = T.IdTipoHabitacion;
-
+GO
 	-- ver reservas en suites
 	Select * From vw_ReservasDetalle Where NombreTipo = 'Suite';
-
-
+GO
 --Estado de cuenta de las reservas 
-
 create or alter view vw_EstadoCuentaReservas as
 select
     R.IdReserva,
@@ -39,16 +37,17 @@ select
     coalesce(sum(P.Importe), 0) as TotalPagado,
     (R.PrecioPorNoche * DATEDIFF(day, R.FechaEntrada, R.FechaSalida)) - coalesce(sum(P.Importe), 0) as SaldoPendiente
 from Reservas R
-left join Pagos P on R.IdReserva = P.IdReserva
+left join Pagos P on R.IdReserva = P.IdReserva and p.Estado = 'Aprobado'
 group by
     R.IdReserva,
     R.FechaEntrada,
     R.FechaSalida,
     R.Estado,
     R.PrecioPorNoche;
-
+GO
 Select * From vw_EstadoCuentaReservas where SaldoPendiente > 0;
 
+GO
 create or alter view vw_GastosMensuales as
 Select
 	year(G.FechaGasto) as Anio,
@@ -59,30 +58,29 @@ Select
 	avg(G.Monto) as PromedioGasto
 	from Gastos G
 	group by year(G.FechaGasto), Month(G.FechaGasto), G.CategoriaGasto;
-
+GO
 -- conocer gastos de noviembre
 	select * from vw_GastosMensuales where Anio = 2026 and Mes = 11;
-
+	GO
 --ver categorias donde mas se gasto
 	select CategoriaGasto, sum(TotalGastado) as TotalPorCategoria from vw_GastosMensuales
 	group by CategoriaGasto
 	order by TotalPorCategoria desc;
-
-
+GO
 --Consumos realizados por cada huesped
 create or alter view vw_ConsumosHuespedes as
 Select H.IdHuesped, H.NombreHuesped, 
 count(distinct C.IdConsumo) as CantidadConsumos,
 Sum(PC.Cantidad * P.Precio) as TotalGastado
 From Huespedes H
-inner join ConsumosDeHuesped C on H.IdHuesped = C.IdConsumo
+inner join ConsumosDeHuesped C on H.IdHuesped = C.IdHuesped
 inner join ProductosPorConsumo PC on C.IdConsumo = PC.IdConsumo
 inner join Productos P on PC.Idproducto = P.IdProducto
 group by H.IdHuesped, H.NombreHuesped;
-
+GO
 --ver que huesped gasto mas
 select * from vw_ConsumosHuespedes order by TotalGastado Desc;
-
+GO
 -- Historial de estadias
 create VIEW vw_HistorialEstadias as
 select
@@ -101,7 +99,9 @@ select
     end as HorasEstadia
 from Estadias E
 inner join Reservas R on E.IdReserva = R.IdReserva;
+GO
 
 --consultar estadias mas largas
 select * from vw_HistorialEstadias
 order BY HorasEstadia desc;
+GO
