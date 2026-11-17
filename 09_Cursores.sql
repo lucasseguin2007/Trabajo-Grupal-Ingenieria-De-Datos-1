@@ -3,6 +3,7 @@
 USE gestiondehotel;
 GO
  
+
 declare @IdReservaVencida int
  
 declare cur_cancelarReservasVencidas CURSOR FAST_FORWARD for

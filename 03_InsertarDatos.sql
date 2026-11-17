@@ -213,7 +213,7 @@ Insert into Estadias(FechaHoraCheckIn,Estado,FechaHoraCheckOut,IdReserva) values
 ('2026-09-20 14:30:00','Finalizada','2026-09-22 10:00:00',3),
 ('2026-09-28 16:10:00','Finalizada','2026-10-01 12:30:00',4),
 ('2026-10-05 14:00:00','Finalizada','2026-10-10 10:00:00',5),
-('2026-10-12 13:45:00','Finalizada','2026-10-14 11:00:00',6),
+('2026-10-12 14:45:00','Finalizada','2026-10-14 11:00:00',6),
 ('2026-10-17 14:20:00','Finalizada','2026-10-20 09:50:00',7),
 ('2026-10-22 15:15:00','Finalizada','2026-10-25 10:30:00',8),
 ('2026-10-24 14:00:00','Finalizada','2026-10-27 12:00:00',9),
@@ -221,7 +221,7 @@ Insert into Estadias(FechaHoraCheckIn,Estado,FechaHoraCheckOut,IdReserva) values
 ('2026-11-02 14:30:00','En curso',NULL,11),
 ('2026-11-03 15:10:00','En curso',NULL,12),
 ('2026-11-01 14:00:00','En curso',NULL,13),
-('2026-11-04 13:50:00','En curso',NULL,14);
+('2026-11-04 14:50:00','En curso',NULL,14);
 GO
 
 
