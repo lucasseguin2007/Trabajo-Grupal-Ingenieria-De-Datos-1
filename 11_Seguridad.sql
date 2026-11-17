@@ -12,8 +12,8 @@ GO
 CREATE SCHEMA huesped;
 GO
  
-CREATE LOGIN login_admin WITH PASSWORD = 'admin';
-CREATE LOGIN login_gerente WITH PASSWORD = 'gerente';
+CREATE LOGIN login_admin WITH PASSWORD = 'admin123';
+CREATE LOGIN login_gerente WITH PASSWORD = 'gerente1';
 CREATE LOGIN login_recepcionista WITH PASSWORD = 'recepcion';
 CREATE LOGIN login_limpieza WITH PASSWORD = 'limpieza';
 CREATE LOGIN login_mantenimiento WITH PASSWORD = 'mantenimiento';
@@ -122,4 +122,13 @@ deny delete on reservas to usuario_huesped;
 
 grant select on gastos to usuario_seguridad;
 revoke select on gastos from usuario_seguridad;
+
+grant execute on sp_checkinestadia to usuario_recepcionista;
+grant execute on sp_habitaciondisponible to usuario_recepcionista;
+grant execute on sp_habitacionlimpia to usuario_limpieza;
+grant execute on sp_empleadomantenimientolibre to usuario_mantenimiento;
+grant execute on sp_plazaslibres to usuario_estacionamiento;
+grant execute on sp_asignarestacionamiento to usuario_estacionamiento;
+
+grant execute on sp_registrarpago to usuario_contable;
 go

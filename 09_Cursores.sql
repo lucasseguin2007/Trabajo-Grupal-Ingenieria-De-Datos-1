@@ -1,4 +1,7 @@
 --Cancelar las reservas pendientes cuya fecha de entrada ya paso
+
+USE gestiondehotel;
+GO
  
 declare @IdReservaVencida int
  
