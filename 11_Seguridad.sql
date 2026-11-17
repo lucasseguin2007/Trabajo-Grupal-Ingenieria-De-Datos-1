@@ -12,17 +12,17 @@ GO
 CREATE SCHEMA huesped;
 GO
  
-CREATE LOGIN login_admin WITH PASSWORD = 'admin123';
-CREATE LOGIN login_gerente WITH PASSWORD = 'gerente1';
-CREATE LOGIN login_recepcionista WITH PASSWORD = 'recepcion';
-CREATE LOGIN login_limpieza WITH PASSWORD = 'limpieza';
-CREATE LOGIN login_mantenimiento WITH PASSWORD = 'mantenimiento';
-CREATE LOGIN login_estacionamiento WITH PASSWORD = 'estacionamiento';
-CREATE LOGIN login_contable WITH PASSWORD = 'contable';
-CREATE LOGIN login_inventarios WITH PASSWORD = 'inventarios';
-CREATE LOGIN login_seguridad WITH PASSWORD = 'seguridad';
-CREATE LOGIN login_serviciosextra WITH PASSWORD = 'serviciosextra';
-CREATE LOGIN login_huesped WITH PASSWORD = 'huesped';
+CREATE LOGIN login_admin WITH PASSWORD = 'Admin123';
+CREATE LOGIN login_gerente WITH PASSWORD = 'Gerente1';
+CREATE LOGIN login_recepcionista WITH PASSWORD = 'Recepcion1';
+CREATE LOGIN login_limpieza WITH PASSWORD = 'Limpieza1';
+CREATE LOGIN login_mantenimiento WITH PASSWORD = 'Mantenimiento1';
+CREATE LOGIN login_estacionamiento WITH PASSWORD = 'Estacionamiento1';
+CREATE LOGIN login_contable WITH PASSWORD = 'Contable1';
+CREATE LOGIN login_inventarios WITH PASSWORD = 'Inventarios1';
+CREATE LOGIN login_seguridad WITH PASSWORD = 'Seguridad1';
+CREATE LOGIN login_serviciosextra WITH PASSWORD = 'Serviciosextra1';
+CREATE LOGIN login_huesped WITH PASSWORD = 'Huesped1';
 GO
  
 CREATE USER usuario_admin FOR LOGIN login_admin;
