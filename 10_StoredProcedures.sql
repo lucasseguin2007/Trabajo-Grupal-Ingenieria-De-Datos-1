@@ -83,7 +83,7 @@ begin
         begin
             ;throw 50023, 'La reserva ya tiene un check-in registrado.',1;
         end;
-        select @IdHabitacion = @IdHabitacion
+        select @IdHabitacion = IdHabitacion
         from Reservas
         where IdReserva = @IdReserva;
 
@@ -97,7 +97,7 @@ begin
             where IdHabitacion = @IdHabitacion and Estado in ('Disponible', 'Reservada') and Limpieza = 'Limpia'
            )
         begin 
-            ;throw;50019, 'La habitacion reservada no esta disponible para el check-in',1;
+            ;throw 50019, 'La habitacion reservada no esta disponible para el check-in',1;
         end;
         select @CantidadHuespedes = count(*)
         from ReservasHuespedes
