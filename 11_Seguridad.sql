@@ -12,17 +12,17 @@ GO
 CREATE SCHEMA huesped;
 GO
  
-CREATE LOGIN login_admin WITH PASSWORD = 'admin';
-CREATE LOGIN login_gerente WITH PASSWORD = 'gerente';
-CREATE LOGIN login_recepcionista WITH PASSWORD = 'recepcion';
-CREATE LOGIN login_limpieza WITH PASSWORD = 'limpieza';
-CREATE LOGIN login_mantenimiento WITH PASSWORD = 'mantenimiento';
-CREATE LOGIN login_estacionamiento WITH PASSWORD = 'estacionamiento';
-CREATE LOGIN login_contable WITH PASSWORD = 'contable';
-CREATE LOGIN login_inventarios WITH PASSWORD = 'inventarios';
-CREATE LOGIN login_seguridad WITH PASSWORD = 'seguridad';
-CREATE LOGIN login_serviciosextra WITH PASSWORD = 'serviciosextra';
-CREATE LOGIN login_huesped WITH PASSWORD = 'huesped';
+CREATE LOGIN login_admin WITH PASSWORD = 'Admin123';
+CREATE LOGIN login_gerente WITH PASSWORD = 'Gerente123';
+CREATE LOGIN login_recepcionista WITH PASSWORD = 'Recepcion123';
+CREATE LOGIN login_limpieza WITH PASSWORD = 'Limpieza123';
+CREATE LOGIN login_mantenimiento WITH PASSWORD = 'Mantenimiento123';
+CREATE LOGIN login_estacionamiento WITH PASSWORD = 'Estacionamiento123';
+CREATE LOGIN login_contable WITH PASSWORD = 'Contable123';
+CREATE LOGIN login_inventarios WITH PASSWORD = 'Inventarios123';
+CREATE LOGIN login_seguridad WITH PASSWORD = 'Seguridad123';
+CREATE LOGIN login_serviciosextra WITH PASSWORD = 'Serviciosextra123';
+CREATE LOGIN login_huesped WITH PASSWORD = 'Huesped123';
 GO
  
 CREATE USER usuario_admin FOR LOGIN login_admin;
@@ -122,4 +122,12 @@ deny delete on reservas to usuario_huesped;
 
 grant select on gastos to usuario_seguridad;
 revoke select on gastos from usuario_seguridad;
+
+grant execute on sp_checkinestadia to usuario_recepcionista;
+grant execute on sp_habitaciondisponible to usuario_recepcionista;
+grant execute on sp_habitacionlimpia to usuario_limpieza;
+grant execute on sp_empleadomantenimientolibre to usuario_mantenimiento;
+grant execute on sp_plazaslibres to usuario_estacionamiento;
+grant execute on sp_asignarestacionamiento to usuario_estacionamiento;
+grant execute on sp_registrarpago to usuario_contable;
 go
