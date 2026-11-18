@@ -113,6 +113,8 @@ GO
 create table VehiculosPlazas(
 	IdVehiculo int not null,
 	IdPlazaDeEstacionamiento int not null,
+	FechaEntradaPlaza datetime2 default getdate(),
+	FechaSalidaPlaza datetime,
 	constraint IdVehiculoPlaza primary key (IdVehiculo, IdPlazaDeEstacionamiento),
 	constraint VehiculoPlaza_Vehiculos foreign key (IdVehiculo) references Vehiculos(IdVehiculo),
 	constraint VehiculoPlaza_Plaza foreign key (IdPlazaDeEstacionamiento) references PlazasDeEstacionamiento (IdPlazaDeEstacionamiento)
@@ -181,18 +183,20 @@ CREATE TABLE Gastos (
 GO
 
 CREATE TABLE ConsumosDeHuesped (
+	IdConsumo INT PRIMARY KEY IDENTITY(1,1),
 	IdHuesped INT NOT NULL,
-	IdConsumo INT NOT NULL,
 	FechaConsumo DATE NOT NULL,
-	CONSTRAINT ConsumoDeHuesped PRIMARY KEY (IdHuesped,IdConsumo)
+	CONSTRAINT IdHuesped_Consumo FOREIGN KEY (IdHuesped) REFERENCES Huespedes(IdHuesped)
 	)
 GO
 
-create table ProductosPorConsumo (
-	IdConsumo int primary key identity(1,1),
-	Idproducto int,
-	foreign key (IdProducto) references Productos(IdProducto),
-	Cantidad int  not null,
+create table ProductosPorConsumo ( 
+	IdConsumo INT NOT NULL,
+	IdProducto INT NOT NULL,
+	Cantidad INT NOT NULL,
+	CONSTRAINT PK_ProductosPorConsumo PRIMARY KEY (IdConsumo, IdProducto),
+	CONSTRAINT IdConsumo_Detalle FOREIGN KEY (IdConsumo) REFERENCES ConsumosDeHuesped(IdConsumo),
+	CONSTRAINT IdProducto_Detalle FOREIGN KEY (IdProducto) REFERENCES Productos(IdProducto),
 	CONSTRAINT ValidarCantidadConsumo CHECK (Cantidad > 0)
 	)
 GO
