@@ -155,6 +155,13 @@ INSERT INTO Vehiculos(IdHuesped,MarcaVehiculo,ModeloVehiculo,ColorVehiculo,Paten
 (15,'Jeep','Renegade','Azul','AA666GG');
 GO
 
+INSERT INTO VehiculosPlazas(IdVehiculo,IdPlazaDeEstacionamiento,FechaEntradaPlaza,FechaSalidaPlaza) VALUES
+(1,1,'2026-09-10',NULL),
+(2,2,'2026-09-12',NULL),
+(3,3,'2026-09-15',NULL),
+(4,4,'2026-09-20',NULL);
+GO
+
 
 INSERT INTO Reservas(FechaReserva,Estado,FechaEntrada,FechaSalida,IdHabitacion,PrecioPorNoche) VALUES
 ('2026-09-01','Finalizada','2026-09-10','2026-09-13',2,45000),
@@ -261,53 +268,52 @@ INSERT INTO Productos(NombreProducto,IdCategoria,Stock,Precio) VALUES
 GO
 
 
-INSERT INTO ProductosPorConsumo(Idproducto,cantidad) VALUES
-(1,2),
-(10,1),
-(4,3),
-(13,2),
-(5,2),
-(7,1),
-(15,2),
-(11,2),
-(16,1),
-(6,2),
-(4,4),
-(14,3),
-(2,2),
-(10,1),
-(3,2),
-(12,2),
-(4,2),
-(17,1),
-(18,1),
-(8,2);
+Insert into ConsumosDeHuesped(IdHuesped,FechaConsumo) values
+(1,'2026-09-11'),
+(1,'2026-09-12'),
+(2,'2026-09-16'),
+(4,'2026-09-21'),
+(3,'2026-09-29'),
+(5,'2026-10-06'),
+(5,'2026-10-08'),
+(6,'2026-10-13'),
+(7,'2026-10-13'),
+(8,'2026-10-23'),
+(7,'2026-10-25'),
+(3,'2026-10-26'),
+(2,'2026-10-29'),
+(9,'2026-11-03'),
+(10,'2026-11-03'),
+(11,'2026-11-04'),
+(12,'2026-11-02'),
+(12,'2026-11-03'),
+(9,'2026-11-04'),
+(7,'2026-11-04');
 GO
 
 
-Insert into ConsumosDeHuesped(IdHuesped,IdConsumo,FechaConsumo) values
-(1,1,'2026-09-11'),
-(1,2,'2026-09-12'),
-(2,3,'2026-09-16'),
-(4,4,'2026-09-21'),
-(3,5,'2026-09-29'),
-(5,6,'2026-10-06'),
-(5,7,'2026-10-08'),
-(6,8,'2026-10-13'),
-(7,9,'2026-10-13'),
-(8,10,'2026-10-23'),
-(7,11,'2026-10-25'),
-(3,12,'2026-10-26'),
-(2,13,'2026-10-29'),
-(9,14,'2026-11-03'),
-(10,15,'2026-11-03'),
-(11,16,'2026-11-04'),
-(12,17,'2026-11-02'),
-(12,18,'2026-11-03'),
-(9,19,'2026-11-04'),
-(7,20,'2026-11-04');
+INSERT INTO ProductosPorConsumo(IdConsumo,IdProducto,Cantidad) VALUES
+(1,1,2),
+(2,10,1),
+(3,4,3),
+(4,13,2),
+(5,5,2),
+(6,7,1),
+(7,15,2),
+(8,11,2),
+(9,16,1),
+(10,6,2),
+(11,4,4),
+(12,14,3),
+(13,2,2),
+(14,10,1),
+(15,3,2),
+(16,12,2),
+(17,4,2),
+(18,17,1),
+(19,18,1),
+(20,8,2);
 GO
-
 
 INSERT INTO Facturas(IdEmpleado,FechaEmision,IdReserva,TipoFactura) values
 (1,'2026-09-13',1,'Factura B'),
