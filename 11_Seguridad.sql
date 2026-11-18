@@ -54,7 +54,9 @@ GO
 grant select, insert, update, delete, execute on schema::dbo to usuario_admin;
  
 grant select on schema::dbo to usuario_gerente;
-grant execute on schema::dbo to usuario_gerente;
+grant execute on fn_importereserva to usuario_gerente;
+grant execute on fn_saldopendientereserva to usuario_gerente;
+grant execute on fn_totalgastadohuesped to usuario_gerente;
 deny insert, update, delete on schema::dbo to usuario_gerente;
  
 grant insert on registrosdeasistencia to usuario_recepcionista, usuario_limpieza, usuario_mantenimiento, usuario_estacionamiento, usuario_contable, usuario_inventarios, usuario_seguridad, usuario_serviciosextra;
@@ -73,6 +75,7 @@ grant select on habitaciones to usuario_recepcionista;
 grant select on tiposdehabitacion to usuario_recepcionista;
 grant select on fn_habitacionesdisponibles to usuario_recepcionista;
 grant execute on fn_importereserva to usuario_recepcionista;
+grant execute on sp_registrarpago to usuario_recepcionista;
 deny select, insert, update, delete on pagos to usuario_recepcionista;
 deny select, insert, update, delete on facturas to usuario_recepcionista;
 deny select, insert, update, delete on gastos to usuario_recepcionista;
@@ -120,8 +123,6 @@ deny select, insert, update, delete on pagos to usuario_huesped;
 deny select, insert, update, delete on gastos to usuario_huesped;
 deny delete on reservas to usuario_huesped;
 
-grant select on gastos to usuario_seguridad;
-revoke select on gastos from usuario_seguridad;
 
 grant execute on sp_checkinestadia to usuario_recepcionista;
 grant execute on sp_habitaciondisponible to usuario_recepcionista;
