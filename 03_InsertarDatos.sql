@@ -47,28 +47,28 @@ GO
 
 
 INSERT INTO RegistrosDeAsistencia(IdEmpleado,HoraEntrada,HoraSalida) VALUES
-(1,'08:02','16:05'),
-(1,'08:00','16:00'),
-(1,'07:58','16:10'),
-(2,'16:05','23:00'),
-(2,'16:00','23:02'),
-(3,'08:10','16:00'),
-(3,'08:00','15:55'),
-(4,'08:00','16:00'),
-(4,'08:20','16:00'),
-(5,'07:01','15:00'),
-(5,'07:05','15:00'),
-(6,'07:00','15:10'),
-(6,'07:00','15:00'),
-(6,'06:55','15:03'),
-(7,'15:00','23:04'),
-(7,'15:30','23:00'),
-(8,'15:00','23:07'),
-(9,'09:00','17:00'),
-(10,'09:00','17:20'),
-(11,'09:00','17:00'),
-(13,'06:00','14:01'),
-(14,'06:25','14:00');
+(1,'2026-11-02 08:02:00','2026-11-02 16:05:00'),
+(1,'2026-11-03 08:00:00','2026-11-03 16:00:00'),
+(1,'2026-11-04 07:58:00','2026-11-04 16:10:00'),
+(2,'2026-11-02 16:05:00','2026-11-02 23:00:00'),
+(2,'2026-11-03 16:00:00','2026-11-03 23:02:00'),
+(3,'2026-11-02 08:10:00','2026-11-02 16:00:00'),
+(3,'2026-11-03 08:00:00','2026-11-03 15:55:00'),
+(4,'2026-11-02 08:00:00','2026-11-02 16:00:00'),
+(4,'2026-11-03 08:20:00','2026-11-03 16:00:00'),
+(5,'2026-11-02 07:01:00','2026-11-02 15:00:00'),
+(5,'2026-11-03 07:05:00','2026-11-03 15:00:00'),
+(6,'2026-11-02 07:00:00','2026-11-02 15:10:00'),
+(6,'2026-11-03 07:00:00','2026-11-03 15:00:00'),
+(6,'2026-11-04 06:55:00','2026-11-04 15:03:00'),
+(7,'2026-11-02 15:00:00','2026-11-02 23:04:00'),
+(7,'2026-11-03 15:30:00','2026-11-03 23:00:00'),
+(8,'2026-11-02 15:00:00','2026-11-02 23:07:00'),
+(9,'2026-11-02 09:00:00','2026-11-02 17:00:00'),
+(10,'2026-11-02 09:00:00','2026-11-02 17:20:00'),
+(11,'2026-11-02 09:00:00','2026-11-02 17:00:00'),
+(13,'2026-11-02 06:00:00','2026-11-02 14:01:00'),
+(14,'2026-11-02 06:25:00','2026-11-02 14:00:00');
 GO
 
 
@@ -94,7 +94,7 @@ INSERT INTO Habitaciones(Estado,Limpieza,Piso,IdTipoHabitacion) VALUES
 ('Disponible','Pendiente',2,2),
 ('Ocupada','Limpia',3,3),
 ('Disponible','Limpia',3,3),
-('Disponible','En proceso',3,3),
+('Disponible','Pendiente',3,3),
 ('Ocupada','Limpia',3,4),
 ('Disponible','Limpia',3,4),
 ('Reservada','Limpia',4,5),
@@ -155,11 +155,11 @@ INSERT INTO Vehiculos(IdHuesped,MarcaVehiculo,ModeloVehiculo,ColorVehiculo,Paten
 (15,'Jeep','Renegade','Azul','AA666GG');
 GO
 
-INSERT INTO VehiculosPlazas(IdVehiculo,IdPlazaDeEstacionamiento,FechaEntradaPlaza,FechaSalidaPlaza) VALUES
-(1,1,'2026-09-10',NULL),
-(2,2,'2026-09-12',NULL),
-(3,3,'2026-09-15',NULL),
-(4,4,'2026-09-20',NULL);
+INSERT INTO VehiculosPlazas(IdVehiculo,IdPlazaDeEstacionamiento) VALUES
+(1,1),
+(2,2),
+(9,3),
+(4,4);
 GO
 
 
@@ -208,6 +208,7 @@ INSERT INTO ReservasHuespedes(idReserva,idHuesped,esTitular) VALUES
 (16,15,1),(16,16,0),
 (17,14,1),(17,15,0),
 (18,16,1),(18,13,0),
+(19,17,1),
 (20,5,1),(20,3,0),
 (21,6,1),(21,7,0),(21,8,0),
 (22,20,1),(22,1,0);
@@ -361,8 +362,7 @@ INSERT INTO Pagos(IdReserva,Metodo,Importe,Cuotas,Descripcion,Estado) values
 (1,'Efectivo',176660,1,'Pago total al check-out','Aprobado'),
 (2,'Tarjeta de credito',270435,3,'Pago en 3 cuotas','Aprobado'),
 (3,'Transferencia',235950,1,'Transferencia bancaria','Aprobado'),
-(4,'Tarjeta de credito',376310,1,'Tarjeta rechazada por fondos insuficientes','Rechazado'),
-(4,'Efectivo',376310,1,'Pago en recepcion tras el rechazo','Aprobado'),
+(4,'Efectivo',376310,1,'Pago en recepcion','Aprobado'),
 (5,'Transferencia',300000,1,'Sena al reservar','Aprobado'),
 (5,'Tarjeta de debito',516508,1,'Saldo al check-out','Aprobado'),
 (6,'Tarjeta de credito',418418,6,'6 cuotas sin interes','Aprobado'),
@@ -370,16 +370,15 @@ INSERT INTO Pagos(IdReserva,Metodo,Importe,Cuotas,Descripcion,Estado) values
 (8,'Tarjeta de debito',268620,1,'Pago al check-out','Aprobado'),
 (9,'Transferencia',400000,1,'Sena al reservar','Aprobado'),
 (9,'Tarjeta de credito',746354,12,'Saldo en 12 cuotas','Aprobado'),
-(10,'Efectivo',254100,1,'Cobro pendiente tras el check-out','Pendiente'),
+(10,'Efectivo',254100,1,'Cobro tras el check-out','Aprobado'),
 (11,'Transferencia',100000,1,'Anticipo','Aprobado'),
 (12,'Tarjeta de credito',100000,1,'Garantia de reserva','Aprobado'),
 (13,'Tarjeta de credito',411400,3,'Pago anticipado en 3 cuotas','Aprobado'),
 (15,'Transferencia',76230,1,'Sena 30%','Aprobado'),
-(16,'Tarjeta de credito',141570,1,'Sena 30%','Pendiente'),
+(16,'Tarjeta de credito',141570,1,'Sena 30%','Aprobado'),
 (17,'Transferencia',360000,1,'Sena 30% suite','Aprobado'),
-(20,'Tarjeta de credito',205700,1,'Pago anticipado de reserva cancelada','Reembolsado'),
-(21,'Tarjeta de debito',157300,1,'Penalidad por cancelacion tardia','Aprobado'),
-(22,'Tarjeta de credito',100000,1,'Pago rechazado por el emisor','Rechazado');
+(20,'Tarjeta de credito',205700,1,'Pago anticipado retenido por cancelacion tardia','Aprobado'),
+(21,'Tarjeta de debito',157300,1,'Penalidad por cancelacion tardia','Aprobado');
 GO
 
 
@@ -424,7 +423,6 @@ INSERT INTO SolicitudesDeMantenimiento(IdEmpleado,Fecha,Estado,Area,Descripcion,
 (5,'2026-11-01','En espera','Conexion','no anda el WiFi en recepcion','Recepcion','Router'),
 (4,'2026-11-02','En espera','Plomeria','la pileta del baño se tapo','Habitacion 8','Pileta'),
 (2,'2026-11-04','En espera','Conexion','el cable HDMI del televisor no anda','Habitacion 1','Cable HDMI'),
-(6,'2026-11-03','En espera',NULL,'hay ruidos extraños en el ascensor','Ascensor',NULL),
 (7,'2026-11-02','En espera','Mantenimiento general','la ventana no agarra la traba','Habitacion 11','Ventana');
 GO
 
@@ -435,26 +433,26 @@ GO
 
 
 INSERT INTO LimpiezasdeHabitaciones(HorarioInicioLimpieza,HorarioFinLimpieza,IdEmpleado,IdHabitacion) values
-('08:00','08:40',5,2),
-('08:45','09:30',5,3),
-('09:35','10:20',5,6),
-('07:00','07:45',5,1),
-('07:50','08:30',5,5),
-('08:35','09:15',5,9),
-('07:00','07:40',6,10),
-('07:45','08:30',6,13),
-('08:35','09:20',6,15),
-('09:30','10:30',6,19),
-('06:30','07:10',13,12),
-('07:15','07:55',13,14),
-('08:00','08:45',13,18),
-('06:30','07:15',14,17),
-('07:20','08:00',14,20),
-('08:05','08:50',14,2),
-('07:00','07:45',6,8),
-('07:50','08:35',6,11),
-('07:00','07:40',6,7),
-('07:45','08:30',6,4);
+('2026-11-02 08:00:00','2026-11-02 08:40:00',5,2),
+('2026-11-02 08:45:00','2026-11-02 09:30:00',5,3),
+('2026-11-02 09:35:00','2026-11-02 10:20:00',5,6),
+('2026-11-02 10:25:00','2026-11-02 11:10:00',5,1),
+('2026-11-02 11:15:00','2026-11-02 11:55:00',5,5),
+('2026-11-02 12:00:00','2026-11-02 12:40:00',5,9),
+('2026-11-02 08:00:00','2026-11-02 08:40:00',6,10),
+('2026-11-02 08:45:00','2026-11-02 09:30:00',6,13),
+('2026-11-02 09:35:00','2026-11-02 10:20:00',6,15),
+('2026-11-02 10:30:00','2026-11-02 11:30:00',6,19),
+('2026-11-02 08:00:00','2026-11-02 08:40:00',13,12),
+('2026-11-02 08:45:00','2026-11-02 09:25:00',13,14),
+('2026-11-02 09:30:00','2026-11-02 10:15:00',13,18),
+('2026-11-02 08:00:00','2026-11-02 08:45:00',14,17),
+('2026-11-02 08:50:00','2026-11-02 09:30:00',14,20),
+('2026-11-02 09:35:00','2026-11-02 10:20:00',14,2),
+('2026-11-03 08:00:00','2026-11-03 08:45:00',6,8),
+('2026-11-03 08:50:00','2026-11-03 09:35:00',6,11),
+('2026-11-03 09:40:00','2026-11-03 10:20:00',6,7),
+('2026-11-03 10:25:00','2026-11-03 11:10:00',6,4);
 GO
 
 

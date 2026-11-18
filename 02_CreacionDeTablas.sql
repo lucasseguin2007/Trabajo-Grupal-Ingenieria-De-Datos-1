@@ -113,8 +113,6 @@ GO
 create table VehiculosPlazas(
 	IdVehiculo int not null,
 	IdPlazaDeEstacionamiento int not null,
-	FechaEntradaPlaza datetime2 default getdate(),
-	FechaSalidaPlaza datetime,
 	constraint IdVehiculoPlaza primary key (IdVehiculo, IdPlazaDeEstacionamiento),
 	constraint VehiculoPlaza_Vehiculos foreign key (IdVehiculo) references Vehiculos(IdVehiculo),
 	constraint VehiculoPlaza_Plaza foreign key (IdPlazaDeEstacionamiento) references PlazasDeEstacionamiento (IdPlazaDeEstacionamiento)
