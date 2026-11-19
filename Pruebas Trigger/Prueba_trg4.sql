@@ -1,0 +1,17 @@
+
+USE GestionDeHotel;
+GO
+
+BEGIN TRY
+    BEGIN TRANSACTION;
+    UPDATE ReservasHuespedes
+    SET EsTitular = 1
+    WHERE IdReserva = 2
+      AND IdHuesped = 3;
+    ROLLBACK TRANSACTION;
+END TRY
+BEGIN CATCH
+    PRINT ERROR_MESSAGE();
+    IF @@TRANCOUNT > 0
+        ROLLBACK TRANSACTION;
+END CATCH;
