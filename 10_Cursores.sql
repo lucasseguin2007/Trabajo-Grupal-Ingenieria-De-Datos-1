@@ -3,11 +3,12 @@
 USE gestiondehotel;
 GO
  
+
 declare @IdReservaVencida int
  
 declare cur_cancelarReservasVencidas CURSOR FAST_FORWARD for
 select IdReserva from Reservas
-where Estado = 'Pendiente' and FechaEntrada < getdate()
+where Estado = 'Pendiente' and FechaEntrada < cast(getdate() as date)
  
 open cur_cancelarReservasVencidas
  
@@ -34,7 +35,7 @@ declare @IdEstadiaVencida int, @IdHabitacionVencida int
 declare cur_checkOutAutomatico CURSOR FAST_FORWARD for
 select Estadias.IdEstadia, Reservas.IdHabitacion from Estadias
 inner join Reservas on Reservas.IdReserva = Estadias.IdReserva
-where Estadias.Estado = 'En curso' and Reservas.FechaSalida < getdate()
+where Estadias.Estado = 'En curso' and Reservas.FechaSalida < cast(getdate() as date)
  
 open cur_checkOutAutomatico
  
@@ -47,7 +48,7 @@ begin
 	where Estadias.IdEstadia = @IdEstadiaVencida
  
 	Update Habitaciones
-	set Limpieza = 'Pendiente'
+	set Limpieza = 'Pendiente', Estado ='Disponible'
 	where Habitaciones.IdHabitacion = @IdHabitacionVencida
  
 	PRINT('Check-out automatico de la estadia de id: ' + cast(@IdEstadiaVencida as NVARCHAR) + ' en la habitacion de id: ' + cast(@IdHabitacionVencida as NVARCHAR))
@@ -127,6 +128,7 @@ begin
 	begin
 		delete from @empleadoLibre
 		insert into @empleadoLibre exec sp_EmpleadoLimpiezaLibre
+		set @empleado= null
 		select @empleado = IdEmpleado from @empleadoLibre
 		insert into LimpiezasdeHabitaciones (HorarioInicioLimpieza, HorarioFinLimpieza, IdEmpleado, IdHabitacion)
 		VALUES (getdate(),dateadd(hour,1,getdate()), @empleado, @idlimpHabitacion);

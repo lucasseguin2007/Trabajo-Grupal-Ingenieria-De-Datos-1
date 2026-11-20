@@ -13,16 +13,16 @@ CREATE SCHEMA huesped;
 GO
  
 CREATE LOGIN login_admin WITH PASSWORD = 'Admin123';
-CREATE LOGIN login_gerente WITH PASSWORD = 'Gerente1';
-CREATE LOGIN login_recepcionista WITH PASSWORD = 'Recepcion1';
-CREATE LOGIN login_limpieza WITH PASSWORD = 'Limpieza1';
-CREATE LOGIN login_mantenimiento WITH PASSWORD = 'Mantenimiento1';
-CREATE LOGIN login_estacionamiento WITH PASSWORD = 'Estacionamiento1';
-CREATE LOGIN login_contable WITH PASSWORD = 'Contable1';
-CREATE LOGIN login_inventarios WITH PASSWORD = 'Inventarios1';
-CREATE LOGIN login_seguridad WITH PASSWORD = 'Seguridad1';
-CREATE LOGIN login_serviciosextra WITH PASSWORD = 'Serviciosextra1';
-CREATE LOGIN login_huesped WITH PASSWORD = 'Huesped1';
+CREATE LOGIN login_gerente WITH PASSWORD = 'Gerente123';
+CREATE LOGIN login_recepcionista WITH PASSWORD = 'Recepcion123';
+CREATE LOGIN login_limpieza WITH PASSWORD = 'Limpieza123';
+CREATE LOGIN login_mantenimiento WITH PASSWORD = 'Mantenimiento123';
+CREATE LOGIN login_estacionamiento WITH PASSWORD = 'Estacionamiento123';
+CREATE LOGIN login_contable WITH PASSWORD = 'Contable123';
+CREATE LOGIN login_inventarios WITH PASSWORD = 'Inventarios123';
+CREATE LOGIN login_seguridad WITH PASSWORD = 'Seguridad123';
+CREATE LOGIN login_serviciosextra WITH PASSWORD = 'Serviciosextra123';
+CREATE LOGIN login_huesped WITH PASSWORD = 'Huesped123';
 GO
  
 CREATE USER usuario_admin FOR LOGIN login_admin;
@@ -129,6 +129,5 @@ grant execute on sp_habitacionlimpia to usuario_limpieza;
 grant execute on sp_empleadomantenimientolibre to usuario_mantenimiento;
 grant execute on sp_plazaslibres to usuario_estacionamiento;
 grant execute on sp_asignarestacionamiento to usuario_estacionamiento;
-
 grant execute on sp_registrarpago to usuario_contable;
 go
