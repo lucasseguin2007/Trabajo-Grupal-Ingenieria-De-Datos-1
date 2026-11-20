@@ -17,8 +17,7 @@ select
     FechaReserva,
     FechaEntrada,
     FechaSalida,
-    Estado,
-    CantidadHuespedes
+    Estado
 from Reservas
 where FechaEntrada >= '2026-11-01' and FechaEntrada <= '2026-11-30'
 order by FechaEntrada asc;
